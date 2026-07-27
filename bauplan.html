@@ -3,27 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zabka Action Figure</title>
+<title>De Bauplan vo de Fabi</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.blister{
-  background:linear-gradient(180deg,#FFD37A,#FF9FC0); border-radius:24px; padding:4px;
-  box-shadow:0 14px 34px rgba(47,143,91,0.25);
+.blueprint{
+  background:#0f2d4a;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 28px);
+  border-radius:20px; padding:20px 12px; box-shadow:0 12px 34px rgba(15,45,74,0.4);
 }
-.blister-inner{background:#123024; border-radius:20px; padding:18px 14px 20px;}
-.blister-title{text-align:center; font-family:'Baloo 2',sans-serif; color:#FFD37A; font-weight:800; font-size:22px; margin:2px 0 0;}
-.blister-sub{text-align:center; color:#EAF7EC; font-size:12px; font-weight:700; letter-spacing:1px; margin-bottom:14px;}
-.window{
-  background:radial-gradient(circle at 50% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%), #0c2018;
-  border:3px dashed #6FCF97; border-radius:16px; padding:16px; text-align:center;
-}
-.window img{max-height:230px; width:auto; filter:drop-shadow(0 8px 14px rgba(0,0,0,0.5));}
-.feature-list{list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:8px;}
-.feature-list li{color:#EAF7EC; font-size:13px; display:flex; gap:8px; align-items:flex-start;}
-.feature-list li::before{content:'✔'; color:#6FCF97; font-weight:800; flex-shrink:0;}
-.barcode{display:flex; gap:2px; align-items:flex-end; justify-content:center; margin-top:16px; height:28px;}
-.barcode span{background:#EAF7EC; width:3px; display:block;}
-.barcode-label{text-align:center; color:#9BB5A6; font-size:10px; letter-spacing:2px; margin-top:4px;}
+.blueprint svg{width:100%; height:auto; display:block;}
+.blueprint-title{text-align:center; color:#EAF7EC; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:18px; margin-top:6px; letter-spacing:1px;}
+.blueprint-sub{text-align:center; color:#8FB8D9; font-size:11px; letter-spacing:2px; margin-top:2px;}
 </style>
 </head>
 <body>
@@ -33,38 +25,56 @@
 </header>
 <div class="wrap">
   <div class="card">
-    <div class="tag">Sammlerstück</div>
-    <h1>Zabka Action Figure</h1>
-    <p>Limitierti Edition. Nur 1x produziert, nöd nachbestellbar.</p>
+    <div class="tag">Technischi Doku</div>
+    <h1>De Vitruvianisch Fabi</h1>
+    <p>Ideale Proportione, wüsseschaftlich dokumentiert (ungefähr).</p>
   </div>
 
-  <div class="blister">
-    <div class="blister-inner">
-      <div class="blister-title">ZABKA · MODELL 11.11</div>
-      <div class="blister-sub">SPECIAL EDITION · WINTERTHUR/ZÜRI SERIE</div>
-      <div class="window">
-        <img src="images/fabi-silhouette.png" alt="Zabka Silhouette">
-      </div>
-      <ul class="feature-list">
-        <li>ICU-Turbo-Modus: bliibt ruehig, wenn's brennt</li>
-        <li>Schlagfertigkeits-Sensor: kontert schneller als du tippsch</li>
-        <li>Kakerlaken-Alarm: löst sofort us, Fluchtreflex inklusive</li>
-        <li>Ornig-Radar: erkennt Chaos uf 20 Meter</li>
-        <li>Frosch-Loyalität: einmal Zabka, immer Zabka</li>
-        <li>Süessigkeits-Speicher: chli, aber täglich in Betrieb</li>
-        <li>Planungs-Prozessor: Koffer parat, 3 Wuche vorher</li>
-        <li>Wander-Motor: läuft au bi 2000 Höhemeter</li>
-        <li>Nacht-Modus: vo Buech bis Techno-Floor</li>
-      </ul>
-      <div class="barcode">
-        <span style="height:100%"></span><span style="height:60%"></span><span style="height:90%"></span><span style="height:40%"></span><span style="height:100%"></span><span style="height:70%"></span><span style="height:50%"></span><span style="height:100%"></span><span style="height:80%"></span><span style="height:60%"></span><span style="height:100%"></span><span style="height:45%"></span>
-      </div>
-      <div class="barcode-label">NICHT FÜR KAKERLAKE GEEIGNET</div>
-    </div>
+  <div class="blueprint">
+    <svg viewBox="0 0 480 620" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="headClip"><circle cx="240" cy="112" r="46"/></clipPath>
+      </defs>
+      <!-- Konstruktionskreis -->
+      <circle cx="240" cy="330" r="185" fill="none" stroke="#6FCF97" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <!-- Konstruktionsquadrat -->
+      <rect x="90" y="150" width="300" height="300" fill="none" stroke="#FFD37A" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+      <!-- Arme horizontal (Quadrat) -->
+      <line x1="95" y1="200" x2="385" y2="200" stroke="#EAF7EC" stroke-width="3" stroke-linecap="round"/>
+      <!-- Arme diagonal erhoben (Kreis) -->
+      <line x1="240" y1="200" x2="112" y2="150" stroke="#EAF7EC" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+      <line x1="240" y1="200" x2="368" y2="150" stroke="#EAF7EC" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+
+      <!-- Rumpf -->
+      <line x1="240" y1="158" x2="240" y2="400" stroke="#EAF7EC" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="240" cy="270" rx="46" ry="82" fill="none" stroke="#EAF7EC" stroke-width="2" opacity="0.7"/>
+
+      <!-- Bein zäme (Quadrat) -->
+      <line x1="240" y1="400" x2="212" y2="512" stroke="#EAF7EC" stroke-width="3" stroke-linecap="round"/>
+      <line x1="240" y1="400" x2="268" y2="512" stroke="#EAF7EC" stroke-width="3" stroke-linecap="round"/>
+      <!-- Bein gspreizt (Kreis) -->
+      <line x1="240" y1="400" x2="140" y2="495" stroke="#EAF7EC" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      <line x1="240" y1="400" x2="340" y2="495" stroke="#EAF7EC" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+
+      <!-- Kopf: echtes Foto, kreisrund -->
+      <circle cx="240" cy="112" r="46" fill="#123024" stroke="#6FCF97" stroke-width="2"/>
+      <image href="images/fabi-sticker.png" x="176" y="46" width="128" height="150" clip-path="url(#headClip)" preserveAspectRatio="xMidYMid slice"/>
+
+      <!-- Masslinien -->
+      <line x1="30" y1="150" x2="30" y2="450" stroke="#8FB8D9" stroke-width="1"/>
+      <line x1="24" y1="150" x2="36" y2="150" stroke="#8FB8D9" stroke-width="1"/>
+      <line x1="24" y1="450" x2="36" y2="450" stroke="#8FB8D9" stroke-width="1"/>
+      <text x="18" y="305" fill="#8FB8D9" font-size="11" text-anchor="middle" transform="rotate(-90 18 305)">1 ZABKA-HÖHI</text>
+
+      <text x="240" y="595" text-anchor="middle" fill="#FFD37A" font-family="Baloo 2, sans-serif" font-weight="700" font-size="15">MODELL ZABKA · PROPORZIONE 1:1 (RICS)</text>
+    </svg>
+    <div class="blueprint-title">DE VITRUVIANISCH FABI</div>
+    <div class="blueprint-sub">SKIZZE · MASSSTAB UNGEFÄHR · SERIE WINTERTHUR/ZÜRI</div>
   </div>
 
   <div class="card" style="margin-top:16px">
-    <p style="margin:0">Batterie hebt e ganzi Nacht Techno duus. Garantie: solang mir zäme si. 💚</p>
+    <p style="margin:0">Ideali Proportione für: Wandere, Schlagfertigkeit, Ornig hebe und Frosch-Loyalität. Zertifiziert vom Chnobli-Institut. 💚</p>
   </div>
 </div>
 </body>
