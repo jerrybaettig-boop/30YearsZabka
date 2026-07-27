@@ -8,6 +8,7 @@
 <style>
 .hobby-card{position:relative; border-radius:20px; overflow:hidden; margin-bottom:14px; min-height:150px; display:flex; align-items:flex-end; box-shadow:0 8px 22px rgba(47,143,91,0.14);}
 .hobby-card img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;}
+.hobby-card .gradient-bg{position:absolute; inset:0; z-index:0; display:flex; align-items:center; justify-content:center; font-size:52px;}
 .hobby-card::after{content:''; position:absolute; inset:0; background:linear-gradient(0deg, rgba(15,40,25,0.72), rgba(15,40,25,0) 60%); z-index:1;}
 .hobby-card .txt{position:relative; z-index:2; padding:16px 18px; color:#fff;}
 .hobby-card .txt h3{color:#fff; margin-bottom:2px;}
@@ -38,24 +39,21 @@
     <img src="images/fabi-wein-schnuppern.jpg" alt="Guet Ässe & Trinke">
     <div class="txt"><h3>🍷 Guet Ässe & es Glas gniesse</h3><p>Fancy, hip, aber ohni 3-Stärne-Zwang</p></div>
   </div>
-
-  <div class="nav-grid">
-    <div class="nav-card" style="cursor:default">
-      <div class="icon">📚</div>
-      <div class="txt"><h3>Läse</h3><p>Ruehigi Namittäg mit eme guete Buech</p></div>
-    </div>
-    <div class="nav-card" style="cursor:default">
-      <div class="icon">🎧</div>
-      <div class="txt"><h3>Techno-Festivals</h3><p>Und hie und da en gsittete Absturz a de Langstross</p></div>
-    </div>
-    <div class="nav-card" style="cursor:default">
-      <div class="icon">🛍️</div>
-      <div class="txt"><h3>Shoppe</h3><p>Egal ob z Züri oder im Usland</p></div>
-    </div>
-    <div class="nav-card" style="cursor:default">
-      <div class="icon">🧼</div>
-      <div class="txt"><h3>Putze (im Ernscht)</h3><p>Ornig dehei isch nöd verhandelbar</p></div>
-    </div>
+  <div class="hobby-card">
+    <div class="gradient-bg" style="background:linear-gradient(135deg,#7860D9,#C9B8FF)">📚</div>
+    <div class="txt"><h3>Läse</h3><p>Ruehigi Namittäg mit eme guete Buech</p></div>
+  </div>
+  <div class="hobby-card">
+    <div class="gradient-bg" style="background:linear-gradient(135deg,#241f3a,#7860D9)">🎧</div>
+    <div class="txt"><h3>Techno-Festivals</h3><p>Und hie und da en gsittete Absturz a de Langstross</p></div>
+  </div>
+  <div class="hobby-card">
+    <div class="gradient-bg" style="background:linear-gradient(135deg,#FF9FC0,#FFD37A)">🛍️</div>
+    <div class="txt"><h3>Shoppe</h3><p>Egal ob z Züri oder im Usland</p></div>
+  </div>
+  <div class="hobby-card">
+    <div class="gradient-bg" style="background:linear-gradient(135deg,#2F8F5B,#6FCF97)">🧼</div>
+    <div class="txt"><h3>Putze (im Ernscht)</h3><p>Ornig dehei isch nöd verhandelbar</p></div>
   </div>
 </div>
 </body>

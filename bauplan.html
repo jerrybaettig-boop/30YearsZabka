@@ -6,11 +6,15 @@
 <title>De Bauplan vo de Fabi</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.blueprint{background:#123024; border-radius:22px; padding:18px 12px; margin-bottom:6px;}
-.blueprint svg{width:100%; height:auto; display:block;}
-.callout{font-family:'Quicksand',sans-serif; font-size:11.5px; fill:#EAF7EC; font-weight:600;}
-.callout-title{font-family:'Baloo 2',sans-serif; font-size:12.5px; fill:#FFD37A; font-weight:700;}
-.leader{stroke:#6FCF97; stroke-width:1; stroke-dasharray:2,2;}
+.blueprint-hero{background:#123024; border-radius:22px; padding:28px 16px 14px; margin-bottom:16px; text-align:center;}
+.blueprint-hero img{max-height:280px; width:auto; margin:0 auto; display:block; filter:drop-shadow(0 10px 20px rgba(0,0,0,0.35));}
+.blueprint-hero .modeltxt{color:#FFD37A; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; margin-top:14px; letter-spacing:0.5px;}
+.spec-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media (max-width:400px){ .spec-grid{grid-template-columns:1fr;} }
+.spec-card{background:var(--card); border:2px solid #E3F5E9; border-radius:16px; padding:14px 16px;}
+.spec-card .spec-icon{font-size:26px; margin-bottom:4px; display:block;}
+.spec-card h3{margin-bottom:2px; font-size:15px;}
+.spec-card p{margin:0; font-size:12.5px;}
 </style>
 </head>
 <body>
@@ -22,59 +26,27 @@
   <div class="card">
     <div class="tag">Technischi Doku</div>
     <h1>De Bauplan vo de Fabi</h1>
-    <p>Wie bim Tom Turbo — nume dass da Räder de Sonderfunktione sind. Modell "Zabka 11.11", Baujahr wie geheim.</p>
+    <p>Wie bim Tom Turbo — nume dass da Räder de Sonderfunktione sind.</p>
   </div>
 
-  <div class="blueprint">
-    <svg viewBox="0 0 600 640" xmlns="http://www.w3.org/2000/svg">
-      <!-- Silhouette -->
-      <circle cx="300" cy="150" r="62" fill="#1F6B4A" stroke="#6FCF97" stroke-width="2"/>
-      <path d="M240 205 Q300 230 360 205 L385 420 Q300 460 215 420 Z" fill="#1F6B4A" stroke="#6FCF97" stroke-width="2"/>
-      <rect x="255" y="415" width="35" height="150" rx="14" fill="#1F6B4A" stroke="#6FCF97" stroke-width="2"/>
-      <rect x="310" y="415" width="35" height="150" rx="14" fill="#1F6B4A" stroke="#6FCF97" stroke-width="2"/>
-
-      <!-- Leader lines + labels -->
-      <line class="leader" x1="300" y1="95" x2="300" y2="40"/>
-      <text x="300" y="28" text-anchor="middle" class="callout-title">ICU-Turbo-Modus</text>
-      <text x="300" y="42" text-anchor="middle" class="callout">Bliibt ruehig, wenn's brennt</text>
-
-      <line class="leader" x1="238" y1="150" x2="90" y2="120"/>
-      <text x="20" y="108" class="callout-title">Schlagfertigkeits-Sensor</text>
-      <text x="20" y="122" class="callout">Kontert schneller als du tippsch</text>
-
-      <line class="leader" x1="362" y1="150" x2="510" y2="120"/>
-      <text x="380" y="108" class="callout-title">Kakerlaken-Alarm</text>
-      <text x="380" y="122" class="callout">Löst sofort us, Fluchtreflex inklusive</text>
-
-      <line class="leader" x1="240" y1="260" x2="70" y2="260"/>
-      <text x="10" y="248" class="callout-title">Ornig-Radar</text>
-      <text x="10" y="262" class="callout">Erkennt Chaos uf 20 Meter</text>
-
-      <line class="leader" x1="360" y1="260" x2="530" y2="260"/>
-      <text x="380" y="248" class="callout-title">Frosch-Loyalität</text>
-      <text x="380" y="262" class="callout">Einmal Zabka, immer Zabka</text>
-
-      <line class="leader" x1="230" y1="350" x2="60" y2="380"/>
-      <text x="5" y="368" class="callout-title">Süessigkeits-Speicher</text>
-      <text x="5" y="382" class="callout">Klein, aber täglich in Betrieb</text>
-
-      <line class="leader" x1="370" y1="350" x2="540" y2="380"/>
-      <text x="390" y="368" class="callout-title">Planungs-Prozessor</text>
-      <text x="390" y="382" class="callout">Koffer parat, 3 Wuche vorher</text>
-
-      <line class="leader" x1="270" y1="480" x2="140" y2="520"/>
-      <text x="60" y="536" class="callout-title">Wander-Motor</text>
-      <text x="60" y="550" class="callout">Läuft au no bi 2000 Höhemeter</text>
-
-      <line class="leader" x1="330" y1="480" x2="460" y2="520"/>
-      <text x="380" y="536" class="callout-title">Nacht-Modus</text>
-      <text x="380" y="550" class="callout">Vo Buech bis Techno-Floor</text>
-
-      <text x="300" y="610" text-anchor="middle" class="callout-title" style="font-size:15px">Modell: ZABKA-11.11 · Serie: Winterthur/Züri</text>
-    </svg>
+  <div class="blueprint-hero">
+    <img src="images/fabi-silhouette.png" alt="Silhouette Fabi">
+    <div class="modeltxt">MODELL ZABKA-11.11 · SERIE WINTERTHUR/ZÜRI</div>
   </div>
 
-  <div class="card">
+  <div class="spec-grid">
+    <div class="spec-card"><span class="spec-icon">🚑</span><h3>ICU-Turbo-Modus</h3><p>Bliibt ruehig, wenn's brennt</p></div>
+    <div class="spec-card"><span class="spec-icon">💬</span><h3>Schlagfertigkeits-Sensor</h3><p>Kontert schneller als du tippsch</p></div>
+    <div class="spec-card"><span class="spec-icon">🪳</span><h3>Kakerlaken-Alarm</h3><p>Löst sofort us, Fluchtreflex inklusive</p></div>
+    <div class="spec-card"><span class="spec-icon">🧼</span><h3>Ornig-Radar</h3><p>Erkennt Chaos uf 20 Meter</p></div>
+    <div class="spec-card"><span class="spec-icon">🐸</span><h3>Frosch-Loyalität</h3><p>Einmal Zabka, immer Zabka</p></div>
+    <div class="spec-card"><span class="spec-icon">🍫</span><h3>Süessigkeits-Speicher</h3><p>Chli, aber täglich in Betrieb</p></div>
+    <div class="spec-card"><span class="spec-icon">🧳</span><h3>Planungs-Prozessor</h3><p>Koffer parat, 3 Wuche vorher</p></div>
+    <div class="spec-card"><span class="spec-icon">🥾</span><h3>Wander-Motor</h3><p>Läuft au no bi 2000 Höhemeter</p></div>
+    <div class="spec-card"><span class="spec-icon">🌙</span><h3>Nacht-Modus</h3><p>Vo Buech bis Techno-Floor</p></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
     <p style="margin:0">Kurz gseit: es hochkomplexs System us Härz, Humor und Hygiene-Wahn — und geng verlässlich unterwegs.</p>
   </div>
 </div>
