@@ -3,139 +3,224 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dein perfekter Trip</title>
+<title>Dis perfekte Trip</title>
 <link rel="stylesheet" href="../assets/style.css">
+<style>
+@media print{
+  .stickynav, .btn, .btn-row, .small{display:none !important;}
+  body{background:#fff;}
+  .card{box-shadow:none; border:none;}
+}
+.voucher-photo{width:100px; height:100px; border-radius:50%; object-fit:cover; border:4px solid var(--leaf); margin:0 auto 14px; display:block;}
+.locked-box{border:2px solid #E3F5E9; border-radius:16px; padding:16px; margin-top:16px;}
+.locked-box input{width:100%; padding:12px 14px; border-radius:12px; border:2px solid #E3F5E9; font-family:'Quicksand',sans-serif; font-size:15px; margin-bottom:10px;}
+</style>
 </head>
 <body>
+<header class="stickynav">
+  <a href="../index.html" class="brand">🐸 Zabka-Fäscht</a>
+  <a href="../index.html" class="back">← zrugg</a>
+</header>
 <div class="wrap"><div class="card" id="app"></div></div>
 
 <script>
-/* WICHTIG: Formspree-Endpoint nach dem Erstellen eines kostenlosen Accounts hier eintragen */
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/DEIN_CODE_HIER";
+/* WICHTIG: Formspree-Endpoint nach dem Erstelle vo emene Account hie iitrage.
+   S Formular-Postfach muess uf jerry.baettig@gmail.com iigrichtet si. */
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mykrlrpz";
+const ADMIN_CODE = "KNOBLI2026"; // zum Zrucksetze, falls scho abgschlosse
 
-/* Zugriffsschutz: nur wenn Passcode-Quiz gelöst wurde */
 if(sessionStorage.getItem("geschenk-unlocked") !== "1"){
   window.location.href = "index.html";
 }
 
 const DESTS = [
-  {id:'porto', name:'Porto', land:'Portugal', blurb:'Steile Gassen, Portwein-Keller und die schönste Brücke über den Douro.', party:1, nature:1, culture:3, budget:1, warmth:3},
-  {id:'madrid', name:'Madrid', land:'Spanien', blurb:'Tapas-Hopping, Museen bis Mitternacht, Nachtleben bis zum Sonnenaufgang.', party:3, nature:0, culture:3, budget:2, warmth:3},
-  {id:'oslo', name:'Oslo', land:'Norwegen', blurb:'Fjord-Luft, Design-Cafés und Natur direkt vor der Haustür.', party:1, nature:3, culture:1, budget:3, warmth:0},
-  {id:'friedrichstadt', name:'Friedrichstadt', land:'Nordfriesland, DE', blurb:'Kleine holländische Grachtenstadt, flaches Land, Ruhe und frische Nordsee-Luft.', party:0, nature:3, culture:1, budget:1, warmth:1},
-  {id:'edinburgh', name:'Edinburgh', land:'Schottland', blurb:'Mittelalterliche Altstadt, Whisky-Bars und Hügel mit Aussicht über die Stadt.', party:2, nature:2, culture:3, budget:2, warmth:1},
-  {id:'paris', name:'Paris', land:'Frankreich', blurb:'Croissants, Kunst, Seine-Ufer und der Charme der ewigen Filmkulisse.', party:2, nature:0, culture:3, budget:3, warmth:2},
-  {id:'lissabon', name:'Lissabon', land:'Portugal', blurb:'Tramfahrten durch die Hügel, Sonnenuntergänge, entspannter Beach-Vibe nebenan.', party:2, nature:1, culture:2, budget:1, warmth:3},
-  {id:'kopenhagen', name:'Kopenhagen', land:'Dänemark', blurb:'Fahrrad-Stadt mit Design, Hygge und feiner Küche am Wasser.', party:2, nature:1, culture:2, budget:3, warmth:1},
+  {id:'porto', name:'Porto', land:'Portugal', blurb:'Steili Gasse, Portwii-Kalter, Strand vor de Türe und die schönschti Brugg über de Douro.', party:1, nature:1, culture:3, budget:1, warmth:3, coastal:3},
+  {id:'madrid', name:'Madrid', land:'Spanie', blurb:'Tapas-Hoppe, Museen bis Mitternacht, Nachtläbe bis zum Sunnenufgang — aber ohni Strand.', party:3, nature:0, culture:3, budget:2, warmth:3, coastal:0},
+  {id:'oslo', name:'Oslo', land:'Norwege', blurb:'Fjord-Luft, Design-Cafés und Natur direkt vor de Hustür.', party:1, nature:3, culture:1, budget:3, warmth:0, coastal:1},
+  {id:'friedrichstadt', name:'Friedrichstadt', land:'Nordfriesland, DE', blurb:'Chlini holländischi Grachtestadt, Rueih und frischi Nordsee-Luft, Watt zum Erkunde.', party:0, nature:3, culture:1, budget:1, warmth:1, coastal:2},
+  {id:'edinburgh', name:'Edinburgh', land:'Schottland', blurb:'Mittelalterlichi Altstadt, Whisky-Bars und Hügel mit Usblick.', party:2, nature:2, culture:3, budget:2, warmth:1, coastal:1},
+  {id:'paris', name:'Paris', land:'Frankriich', blurb:'Croissants, Kunst, Seine-Ufer und de Charme vo de ewige Filmkulisse.', party:2, nature:0, culture:3, budget:3, warmth:2, coastal:0},
+  {id:'lissabon', name:'Lissabon', land:'Portugal', blurb:'Tramfahrte durab d Hügel, Sunnenuntergäng und entspannti Beach-Vibe glich näbedra.', party:2, nature:1, culture:2, budget:1, warmth:3, coastal:3},
+  {id:'kopenhagen', name:'Kopenhage', land:'Dänemark', blurb:'Velo-Stadt mit Design, Hygge und Schwümme im Hafebecki.', party:2, nature:1, culture:2, budget:3, warmth:1, coastal:2},
 ];
 
 const QUESTIONS = [
-  {q:'In welcher Jahreszeit stellst du dir die Reise am ehesten vor?', type:'text', opts:[
-    {t:'Frühling 🌸'},{t:'Sommer ☀️', warmth:1},{t:'Herbst 🍂'},{t:'Winter ❄️', warmth:-1}
+  {q:'I welere Jahresziit würdsch am liebste weg?', type:'text', opts:[
+    {t:'Früehlig 🌸'},
+    {t:'Summer ☀️', warmth:1},
+    {t:'Härbst 🍂'},
+    {t:'Winter ❄️', warmth:-1}
   ]},
-  {q:'Was zieht dich mehr an?', type:'image', opts:[
-    {t:'Sonne, Strand und Meer', img:'../images/quiz-warm.jpg', warmth:3},
-    {t:'Landschaft, frische Luft, gemütliche Pubs', img:'../images/quiz-cold.jpg', warmth:-3, nature:1}
+  {q:'Wo ziehts dich am ehste ane für es paar Täg?', type:'image', opts:[
+    {t:'Palme, Strand und Meer', img:'../images/quiz-strand.jpg', warmth:3, coastal:3},
+    {t:'Berge, frischi Luft', img:'../images/quiz-berge.jpg', warmth:-2, nature:2},
+    {t:'Pulsierendi Grossstadt', img:'../images/quiz-stadt2.jpg', culture:2}
   ]},
-  {q:'Diese oder das?', type:'image', opts:[
-    {t:'Rooftop-Bar bis 3 Uhr morgens', img:'../images/quiz-party.jpg', party:3, companion:-1},
-    {t:'Gemütlicher Lesenachmittag', img:'../images/quiz-chill.jpg', party:-2, culture:1}
+  {q:'Wo wetsch din Abig verbringe?', type:'image', opts:[
+    {t:'Cocktailbar mit Usblick', img:'../images/quiz-cocktail.jpg', party:2},
+    {t:'Gmüetlich mit emene Buech', img:'../images/quiz-buch.jpg', party:-2, culture:1},
+    {t:'Im Club bis spät', img:'../images/quiz-club.jpg', party:3, companion:-1}
   ]},
-  {q:'Beim Essen bist du eher...', type:'text', opts:[
-    {t:'Fancy Street-Food-Markt, Hauptsache lecker', budget:-1, culture:1},
-    {t:'Hippes veggie Restaurant, Insta-tauglich', budget:1, culture:2}
+  {q:'Wenn's ums Ässe goht, lieber:', type:'text', opts:[
+    {t:'Fancy Street-Food-Määrt', budget:-1, culture:1},
+    {t:'Hipps veggie Restaurant', budget:1, culture:2},
+    {t:'Gediegen, aber kei 3-Stärne', budget:2, culture:2}
   ]},
-  {q:'Was klingt verlockender?', type:'text', opts:[
-    {t:'Techno-Festival-Lineup durchforsten', party:2},
-    {t:'Lesecafé mit Aussicht', party:-2, nature:1}
+  {q:'Was macht di meh a?', type:'text', opts:[
+    {t:'Techno-Festival-Lineup dörefahnde', party:2},
+    {t:'Lesecafé mit Usblick', party:-2, nature:1},
+    {t:'Ineme Bar hocke und Lüt zueluege', party:-1, culture:1}
   ]},
-  {q:'Koffer ist schon 3 Wochen vorher gepackt — was kommt zuerst rein?', type:'image', opts:[
-    {t:'Wanderschuhe', img:'../images/quiz-wandern.jpg', nature:2},
-    {t:'Das schickste Ausgeh-Outfit', img:'../images/quiz-ausgehen.jpg', party:1, budget:1}
+  {q:'Koffer isch bi dir ja immer scho 3 Wuche vorher packt — was packsch zerscht:', type:'image', opts:[
+    {t:'Wanderschueh', img:'../images/quiz-wandern.jpg', nature:2},
+    {t:'S schickschte Usgang-Outfit', img:'../images/quiz-ausgehen.jpg', party:1, budget:1},
+    {t:'Sunnecreme', img:'../images/quiz-sonnencreme.jpg', warmth:3, coastal:1}
   ]},
-  {q:'Wie viele Höhenmeter am Tag sind ok für die perfekte Reise?', type:'text', opts:[
+  {q:'Wieviel Höhemeter am Tag sind ok?', type:'text', opts:[
     {t:'0, ich chille am Pool', nature:-2, budget:1},
-    {t:'Ein bisschen wandern ist schön', nature:1},
+    {t:'Chli wandere isch schön', nature:1},
     {t:'2000 wie am Choquequirao, bring it on', nature:3}
   ]},
-  {q:'Nach einer 12h-Schicht auf der Intensivstation braucht sie am meisten...', type:'text', opts:[
-    {t:'Ruhe und Natur pur', nature:2},
-    {t:'Ausgehen und den Kopf freitanzen', party:2},
-    {t:'Erstmal aufräumen und Ordnung schaffen', culture:0}
+  {q:'Nacheme N1-Dienst (12-Stünder) bruuchsch du…', type:'text', opts:[
+    {t:'Rueih und Natur pur', nature:2},
+    {t:'Usgang, Chopf freitanze', party:2},
+    {t:'Ufruume und Ornig schaffe', party:-2}
   ]},
-  {q:'Im Hotelzimmer angekommen machst du zuerst...', type:'image', opts:[
-    {t:'Koffer auspacken und alles einräumen', img:'../images/quiz-ordnung.jpg'},
-    {t:'Sofort raus und die Stadt erkunden', img:'../images/quiz-erkunden.jpg', culture:1}
+  {q:'Wenn's im Hotel achunsch, zerscht mal…', type:'image', opts:[
+    {t:'Koffer uspacke, aliräume', img:'../images/quiz-ordnung.jpg'},
+    {t:'Sofort use, go erkunde und entdecke', img:'../images/quiz-erkunden.jpg', culture:1},
+    {t:'Shoppe', culture:2}
   ]},
-  {q:'Ein Ort mit Kakerlaken-Risiko ist für dich...', type:'text', opts:[
-    {t:'No-Go, sofort Hotel wechseln (Hawaii lässt grüssen)', budget:1},
-    {t:'Auszuhalten, solange der Rest stimmt'}
+  {q:'Es Ort mit Kakerlake-Risiko isch für di...', type:'text', opts:[
+    {t:'No-Go, sofort s Hotel wächsle', budget:1},
+    {t:'Uszhalte, so lang de Räscht stimmt'},
+    {t:'Dänn chasch ellei gah 😏'}
   ]},
-  {q:'Street-Food oder Fine Dining?', type:'text', opts:[
-    {t:'Street-Food, Hauptsache lecker und günstig', budget:-2},
-    {t:'Fine Dining, aber keine 3-Sterne-Nötigkeit', budget:2}
+  {q:'Wie wetsch huusä?', type:'text', opts:[
+    {t:'Ineme Palascht', budget:2},
+    {t:'Hütte ohni Bettdecki', budget:-2},
+    {t:'Egal, Hauptsach geil', budget:1}
   ]},
-  {q:'Dein Food-Style unterwegs?', type:'text', opts:[
-    {t:'Hip, vegetarisch, Insta-tauglich', culture:1, budget:1},
-    {t:'Klassisch Street-Food', budget:-1},
-    {t:'Alles, solange gesund und proteinreich', culture:0}
+  {q:'Wie wetsch dethi cho?', type:'text', opts:[
+    {t:'Zug/Bus', culture:1},
+    {t:'Flugi', budget:2},
+    {t:'Auto', budget:-1}
   ]},
   {q:'Playlist fürs Roadtrip-Auto?', type:'image', opts:[
-    {t:'Techno, bis der Bass wackelt', img:'../images/quiz-techno.jpg', party:2},
-    {t:'Neue-deutsche Chart-Bangers zum Mitsingen', img:'../images/quiz-charts.jpg', party:1, culture:1}
+    {t:'Techno, bis de Bass wackelt', img:'../images/quiz-techno.jpg', party:2},
+    {t:'Neui-dütschi Chart-Bangers zum Mitsinge', img:'../images/quiz-charts.jpg', party:1, culture:1}
   ]},
-  {q:'Stell dir die Reise vor — wer ist dabei?', type:'text', opts:[
-    {t:'Nur wir zwei, Zabka und Knobli', companion:2},
-    {t:'Die ganze Crew, Party-Modus an', companion:-2},
+  {q:'Stell dir d Reis vor — wär isch debii?', type:'text', opts:[
+    {t:'Nur mir zwei, Zabka und Chnobli', companion:2},
+    {t:'Die ganzi Crew, Party-Modus a', companion:-2},
     {t:'Überrasch mich', companion:0}
   ]},
-  {q:'Perfekter Abend?', type:'text', opts:[
+  {q:'Perfekte Obig?', type:'text', opts:[
     {t:'Karaoke und Club bis spät, wie im Kanban', companion:-2, party:2},
-    {t:'Ruhiges Dinner, nur wir zwei', companion:2}
+    {t:'Rueihigs Znacht, nur mir zwei', companion:2}
   ]},
-  {q:'Dein Budget-Gefühl für diesen Trip?', type:'text', opts:[
-    {t:'Luxuriös, ich will verwöhnt werden', budget:3},
-    {t:'Authentisch und bodenständig', budget:-1},
-    {t:'Solide Mittelklasse reicht völlig', budget:1}
+  {q:'Dis Budget-Gfühl für die Reis?', type:'text', opts:[
+    {t:'Luxuriös, ich will verwöhnt werde', budget:3},
+    {t:'Authentisch und bodeständig, Zelt langt', budget:-1},
+    {t:'Guet aber gmüetlich', budget:1}
   ]},
-  {q:'20 km zu Fuss — lieber durch...', type:'image', opts:[
+  {q:'20 km z Fuess — lieber durab...', type:'image', opts:[
     {t:'Wald und Berge', img:'../images/quiz-natur.jpg', nature:3},
-    {t:'Strassen und Shops einer Grossstadt', img:'../images/quiz-stadt.jpg', culture:2}
+    {t:'Strasse und Shops ere Grossstadt', img:'../images/quiz-stadt.jpg', culture:2},
+    {t:'Am Strand entlang', img:'../images/quiz-beach.jpg', coastal:3}
   ]},
-  {q:'Dein bisheriges Reise-Highlight war eher wie...', type:'text', opts:[
-    {t:'Peru/Kolumbien: Abenteuer und Kultur pur', culture:2, nature:2},
-    {t:'Tromsø: Ruhe, Landschaft, Kälte', nature:3, warmth:-2},
-    {t:'Athen: Stadt-Flair und Geschichte', culture:3}
+  {q:'Dis bisherigs Reis-Highlight isch eher gsi wie...', type:'text', opts:[
+    {t:'Peru/Kolumbie: Abentür und Kultur pur', culture:2, nature:2},
+    {t:'Tromsø: Rueih, Landschaft, Chelti', nature:3, warmth:-2},
+    {t:'Athen: Stadt-Flair und Gschicht', culture:3}
   ]},
-  {q:'Was killt die Reise-Laune garantiert?', type:'text', opts:[
-    {t:'Rumsitzen, nichts erleben', nature:1, culture:1},
-    {t:'Kakerlaken im Zimmer', budget:0}
+  {q:'Was killt d Reis-Luune garantiert?', type:'text', opts:[
+    {t:'Umenandsitze, nüt erläbe', nature:1, culture:1},
+    {t:'Kakerlake im Zimmer'},
+    {t:'Nüt, so lang min Chnobli debi isch 🐸💚', companion:1}
   ]},
-  {q:'Wenn die Reise ein Motto hätte, wäre es...', type:'image', opts:[
-    {t:'Chaos, das am Ende doch klappt', img:'../images/quiz-abenteuer.jpg', nature:2},
-    {t:'Sonne, Meer, nichts tun', img:'../images/quiz-sonne.jpg', warmth:2, budget:1}
+  {q:'Wenn d Reis es Motto hätt, wär's...', type:'image', opts:[
+    {t:'Chaos, wo am Schluss doch klappt', img:'../images/quiz-abenteuer.jpg', nature:2},
+    {t:'Sunne, Meer, nüt tue', img:'../images/quiz-sonne.jpg', warmth:2, budget:1, coastal:2},
+    {t:'Mitm Flitzer durab d City düse', img:'../images/quiz-city.jpg', culture:2}
   ]},
 ];
+
+const STORAGE_KEY = 'geschenk-progress';
 
 let state = {
   step: 0,
   answers: [],
-  axes: {party:0, nature:0, culture:0, budget:0, companion:0, warmth:0},
+  axes: {party:0, nature:0, culture:0, budget:0, companion:0, warmth:0, coastal:0},
   season: '',
   top2: [],
   chosen: null,
-  dates: {wish:{from:'',to:''}, alt1:{from:'',to:''}, alt2:{from:'',to:''}}
+  dates: {wish:{from:'',to:''}, alt1:{from:'',to:''}, alt2:{from:'',to:''}, notPlannable:false}
 };
+
+function saveProgress(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function clearProgress(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+}
 
 function computeMatches(){
   const scored = DESTS.map(d=>{
     const diff = Math.abs(d.party-state.axes.party)+Math.abs(d.nature-state.axes.nature)+
                  Math.abs(d.culture-state.axes.culture)+Math.abs(d.budget-state.axes.budget)+
-                 Math.abs(d.warmth-state.axes.warmth);
+                 Math.abs(d.warmth-state.axes.warmth)+Math.abs(d.coastal-state.axes.coastal);
     return {...d, score:-diff};
   });
   scored.sort((a,b)=>b.score-a.score);
   return scored.slice(0,2);
+}
+
+function checkGateAndRender(){
+  const app = document.getElementById('app');
+  if(localStorage.getItem('geschenk-completed') === '1'){
+    app.innerHTML = `
+      <div class="emoji-big">🔐</div>
+      <h1 style="text-align:center">Scho abgschlosse</h1>
+      <p style="text-align:center">Das Gschänk-Quiz isch scho fertig usgfüllt worde. Wenn öppis nöd gstimmt hät, cha's mit emene Code zruckgsetzt werde.</p>
+      <div class="locked-box">
+        <input type="text" id="admin-code" placeholder="Admin-Code">
+        <button class="btn secondary" id="admin-submit" style="width:100%">Zruecksetze</button>
+      </div>
+    `;
+    document.getElementById('admin-submit').onclick = () => {
+      const val = document.getElementById('admin-code').value.trim();
+      if(val === ADMIN_CODE){
+        localStorage.removeItem('geschenk-completed');
+        clearProgress();
+        location.reload();
+      } else {
+        alert('Code stimmt nöd.');
+      }
+    };
+    return;
+  }
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(saved){
+    try{
+      const parsed = JSON.parse(saved);
+      if(parsed.step > 0){
+        app.innerHTML = `
+          <div class="emoji-big">👋</div>
+          <h1 style="text-align:center">Willkomme zrugg</h1>
+          <p style="text-align:center">Du bisch scho mitte dinne gsi. Witermache oder vo vorne aafo?</p>
+          <div class="center btn-row" style="justify-content:center">
+            <button class="btn" id="resume">Witermache</button>
+            <button class="btn secondary" id="restart">Vo vorne aafo</button>
+          </div>
+        `;
+        document.getElementById('resume').onclick = () => { state = parsed; render(); };
+        document.getElementById('restart').onclick = () => { clearProgress(); render(); };
+        return;
+      }
+    }catch(e){}
+  }
+  render();
 }
 
 function render(){
@@ -144,16 +229,16 @@ function render(){
   else if(state.step >= 1 && state.step <= QUESTIONS.length) app.innerHTML = renderQuestion(state.step-1);
   else if(state.step === QUESTIONS.length+1) app.innerHTML = renderReveal();
   else if(state.step === QUESTIONS.length+2) app.innerHTML = renderDates();
-  else if(state.step === QUESTIONS.length+3) app.innerHTML = renderThanks();
+  else if(state.step === QUESTIONS.length+3) app.innerHTML = renderVoucher();
   attachEvents();
 }
 
 function renderIntro(){
   return `
     <div class="emoji-big">🧳🐸</div>
-    <h1 style="text-align:center">Dein perfekter Trip wartet</h1>
-    <p style="text-align:center">20 Fragen, viele davon typisch dich. Am Ende weiss die App genau, wohin die Reise geht — du entscheidest den Rest.</p>
-    <div class="center"><button class="btn" id="start">Los geht's</button></div>
+    <h1 style="text-align:center">Dis perfekte Trip wartet</h1>
+    <p style="text-align:center">20 Frage, vili dervo typisch du. Am Schluss weiss d App genau, wohin d Reis goht — du entscheidsch de Räscht.</p>
+    <div class="center"><button class="btn" id="start">Los goht's</button></div>
   `;
 }
 
@@ -161,14 +246,14 @@ function renderQuestion(i){
   const q = QUESTIONS[i];
   const pct = Math.round((i/QUESTIONS.length)*100);
   const opts = q.type === 'image'
-    ? `<div class="img-grid">${q.opts.map((o,idx)=>`
+    ? `<div class="img-grid" style="grid-template-columns:repeat(${q.opts.length}, 1fr)">${q.opts.map((o,idx)=>`
         <button class="opt-img" data-i="${idx}">
           <img src="${o.img}" alt="${o.t}" onerror="this.style.display='none'">
           <div class="cap">${o.t}</div>
         </button>`).join('')}</div>`
     : `<div class="opt-grid">${q.opts.map((o,idx)=>`<button class="opt" data-i="${idx}">${o.t}</button>`).join('')}</div>`;
   return `
-    <div class="tag">Frage ${i+1} von ${QUESTIONS.length}</div>
+    <div class="tag">Frag ${i+1} vo ${QUESTIONS.length}</div>
     <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
     <h2>${q.q}</h2>
     ${opts}
@@ -178,11 +263,11 @@ function renderQuestion(i){
 function renderReveal(){
   state.top2 = computeMatches();
   const c = state.axes.companion;
-  const companionLabel = c > 0 ? 'zu zweit, ganz romantisch 💞' : c < 0 ? 'mit Freunden, viel Trubel 🎉' : 'offen für beides 🤷';
+  const companionLabel = c > 0 ? 'zu zwöit, ganz romantisch 💞' : c < 0 ? 'mit Fründe, viel Trubel 🎉' : 'offe für beides 🤷';
   return `
     <div class="emoji-big">🎯</div>
-    <h1 style="text-align:center">Match gefunden!</h1>
-    <p style="text-align:center">Reise-Vibe: <b>${companionLabel}</b><br>Hier sind deine zwei Top-Matches. Wähl aus:</p>
+    <h1 style="text-align:center">Match gfunde!</h1>
+    <p style="text-align:center">Reis-Vibe: <b>${companionLabel}</b><br>Da sind dini zwei Top-Matches. Wähl us:</p>
     <div class="dest-grid">
       ${state.top2.map(d=>`
         <button class="dest-card" data-id="${d.id}">
@@ -195,31 +280,50 @@ function renderReveal(){
 }
 
 function renderDates(){
+  const np = state.dates.notPlannable;
   return `
-    <div class="tag">Fast geschafft</div>
-    <h2>Wann soll's losgehen?</h2>
-    <p>Gib ein verlängertes Wochenende als Wunschtermin an, plus zwei Alternativen.</p>
+    <div class="tag">Fascht gschafft</div>
+    <h2>Wenn söll's losgoh?</h2>
+    <p>Gib es verlängerts Wuchenänd als Wunschtermin a, plus zwei Alternative.</p>
     <div class="field"><label>🌟 Wunschtermin</label><div class="daterow">
-      <input type="date" id="wish-from"><input type="date" id="wish-to"></div></div>
+      <input type="date" id="wish-from" value="${state.dates.wish.from}" ${np?'disabled':''}><input type="date" id="wish-to" value="${state.dates.wish.to}" ${np?'disabled':''}></div></div>
     <div class="field"><label>Alternative 1</label><div class="daterow">
-      <input type="date" id="alt1-from"><input type="date" id="alt1-to"></div></div>
+      <input type="date" id="alt1-from" value="${state.dates.alt1.from}" ${np?'disabled':''}><input type="date" id="alt1-to" value="${state.dates.alt1.to}" ${np?'disabled':''}></div></div>
     <div class="field"><label>Alternative 2</label><div class="daterow">
-      <input type="date" id="alt2-from"><input type="date" id="alt2-to"></div></div>
-    <div class="center" style="margin-top:22px"><button class="btn" id="submit-dates">Speichern und abschicken</button></div>
+      <input type="date" id="alt2-from" value="${state.dates.alt2.from}" ${np?'disabled':''}><input type="date" id="alt2-to" value="${state.dates.alt2.to}" ${np?'disabled':''}></div></div>
+    <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; margin-bottom:10px; cursor:pointer">
+      <input type="checkbox" id="not-plannable" ${np?'checked':''} style="width:18px; height:18px;">
+      Momentan nöd planbar (Schichtplan fehlt), gib ich bald durab
+    </label>
+    <p class="small" id="date-error" style="color:var(--pink-d); display:none">Bitte alli drü Termin agäh oder s Kästli aachrüze.</p>
+    <div class="center" style="margin-top:14px"><button class="btn" id="submit-dates">Spichere und abschicke</button></div>
   `;
 }
 
-function renderThanks(){
+function renderVoucher(){
+  const d = state.chosen;
   return `
     <div class="emoji-big">🎁</div>
-    <h1 style="text-align:center">Auf dem Weg!</h1>
-    <p style="text-align:center">Deine Antworten sind unterwegs. Lehn dich zurück — der Rest ist jetzt nicht mehr dein Problem. 🧡</p>
+    <h1 style="text-align:center">Dis Gschänk-Gutschii</h1>
+    <img src="../images/jerry-photo.jpg" class="voucher-photo" alt="Jerry" onerror="this.style.display='none'">
+    <div class="card" style="background:#F7FCF8; box-shadow:none; border:2px dashed var(--leaf);">
+      <p style="text-align:center; font-size:18px; font-weight:800; color:var(--leaf-d); margin-bottom:4px;">Citytrip nach ${d?d.name:''}, ${d?d.land:''}</p>
+      <p style="text-align:center; margin-bottom:16px;">${state.dates.notPlannable ? 'Termin folgt sobald de Schichtplan da isch' : (state.dates.wish.from+' bis '+state.dates.wish.to)}</p>
+      <div class="divider"></div>
+      <p style="font-style:italic; text-align:center;">"Liebi Zabka 🐸<br><br>
+      Dr Chnobli freut sich riesig uf e tolli Reis mit sinere altä, aber geng na chnackige Zabka. Alles wird organisiert — packe muesch nur na dis Lächle. 💚<br><br>
+      In Liebi, dis Chnobli"</p>
+    </div>
+    <div class="center" style="margin-top:20px">
+      <button class="btn" id="print-btn">Als PDF spichere</button>
+    </div>
+    <p class="small">Tipp: im Druck-Dialog "Als PDF spichere" auswähle.</p>
   `;
 }
 
 function attachEvents(){
   const start = document.getElementById('start');
-  if(start) start.onclick = () => { state.step = 1; render(); };
+  if(start) start.onclick = () => { state.step = 1; saveProgress(); render(); };
 
   document.querySelectorAll('.opt, .opt-img').forEach(btn=>{
     btn.onclick = () => {
@@ -228,10 +332,11 @@ function attachEvents(){
       const opt = q.opts[btn.dataset.i];
       state.answers.push({question:q.q, answer:opt.t});
       if(i === 0) state.season = opt.t;
-      ['party','nature','culture','budget','companion','warmth'].forEach(ax=>{
+      ['party','nature','culture','budget','companion','warmth','coastal'].forEach(ax=>{
         if(opt[ax]) state.axes[ax] += opt[ax];
       });
       state.step++;
+      saveProgress();
       render();
     };
   });
@@ -240,34 +345,60 @@ function attachEvents(){
     btn.onclick = () => {
       state.chosen = state.top2.find(d=>d.id===btn.dataset.id);
       state.step++;
+      saveProgress();
       render();
     };
   });
 
+  const npBox = document.getElementById('not-plannable');
+  if(npBox){
+    npBox.onchange = () => {
+      state.dates.notPlannable = npBox.checked;
+      render();
+    };
+  }
+
   const submitDates = document.getElementById('submit-dates');
   if(submitDates){
     submitDates.onclick = async () => {
-      state.dates.wish.from = document.getElementById('wish-from').value;
-      state.dates.wish.to = document.getElementById('wish-to').value;
-      state.dates.alt1.from = document.getElementById('alt1-from').value;
-      state.dates.alt1.to = document.getElementById('alt1-to').value;
-      state.dates.alt2.from = document.getElementById('alt2-from').value;
-      state.dates.alt2.to = document.getElementById('alt2-to').value;
+      const np = document.getElementById('not-plannable').checked;
+      state.dates.notPlannable = np;
+      if(!np){
+        state.dates.wish.from = document.getElementById('wish-from').value;
+        state.dates.wish.to = document.getElementById('wish-to').value;
+        state.dates.alt1.from = document.getElementById('alt1-from').value;
+        state.dates.alt1.to = document.getElementById('alt1-to').value;
+        state.dates.alt2.from = document.getElementById('alt2-from').value;
+        state.dates.alt2.to = document.getElementById('alt2-to').value;
+        const allFilled = state.dates.wish.from && state.dates.wish.to &&
+                           state.dates.alt1.from && state.dates.alt1.to &&
+                           state.dates.alt2.from && state.dates.alt2.to;
+        if(!allFilled){
+          document.getElementById('date-error').style.display = 'block';
+          return;
+        }
+      }
       await submitToFormspree();
+      localStorage.setItem('geschenk-completed', '1');
+      clearProgress();
       state.step++;
       render();
     };
   }
+
+  const printBtn = document.getElementById('print-btn');
+  if(printBtn) printBtn.onclick = () => window.print();
 }
 
 async function submitToFormspree(){
   const payload = {
+    _subject: "🎁 Fabis Reise-Quiz ist fertig!",
     season: state.season,
     chosenDestination: state.chosen ? `${state.chosen.name} — ${state.chosen.land}` : '',
     topMatches: state.top2.map(d=>d.name).join(', '),
-    wunschtermin: `${state.dates.wish.from} bis ${state.dates.wish.to}`,
-    alternative1: `${state.dates.alt1.from} bis ${state.dates.alt1.to}`,
-    alternative2: `${state.dates.alt2.from} bis ${state.dates.alt2.to}`,
+    wunschtermin: state.dates.notPlannable ? 'nöd planbar, folgt' : `${state.dates.wish.from} bis ${state.dates.wish.to}`,
+    alternative1: state.dates.notPlannable ? '-' : `${state.dates.alt1.from} bis ${state.dates.alt1.to}`,
+    alternative2: state.dates.notPlannable ? '-' : `${state.dates.alt2.from} bis ${state.dates.alt2.to}`,
     alle_antworten: state.answers.map(a=>`${a.question} -> ${a.answer}`).join(' | ')
   };
   try{
@@ -277,11 +408,11 @@ async function submitToFormspree(){
       body: JSON.stringify(payload)
     });
   }catch(e){
-    console.error('Formspree-Versand fehlgeschlagen', e);
+    console.error('Formspree-Versand fehlgschlage', e);
   }
 }
 
-render();
+checkGateAndRender();
 </script>
 </body>
 </html>

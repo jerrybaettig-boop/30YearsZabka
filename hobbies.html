@@ -3,42 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ihre Hobbies</title>
+<title>Ihri Hobbies</title>
 <link rel="stylesheet" href="assets/style.css">
+<style>
+.hobby-card{position:relative; border-radius:20px; overflow:hidden; margin-bottom:14px; min-height:150px; display:flex; align-items:flex-end; box-shadow:0 8px 22px rgba(47,143,91,0.14);}
+.hobby-card img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;}
+.hobby-card::after{content:''; position:absolute; inset:0; background:linear-gradient(0deg, rgba(15,40,25,0.72), rgba(15,40,25,0) 60%); z-index:1;}
+.hobby-card .txt{position:relative; z-index:2; padding:16px 18px; color:#fff;}
+.hobby-card .txt h3{color:#fff; margin-bottom:2px;}
+.hobby-card .txt p{color:#EAF7EC; margin:0; font-size:13px;}
+</style>
 </head>
 <body>
-<header class="top"><a href="index.html">← zurück</a></header>
+<header class="stickynav">
+  <a href="index.html" class="brand">🐸 Zabka-Fäscht</a>
+  <a href="index.html" class="back">← zrugg</a>
+</header>
 <div class="wrap">
   <div class="card">
     <div class="tag">Hobbies</div>
-    <h1>Zwischen Techno und Trekking</h1>
-    <p>Fabi ist schwer in eine Schublade zu stecken — und genau das macht sie aus:</p>
+    <h1>Zwüsched Techno und Trekking</h1>
+    <p>D Fabi lot sich schwär i nur ei Schublade stecke — und genau das machts us:</p>
+  </div>
+
+  <div class="hobby-card">
+    <img src="images/fabi-joggen-peace.jpg" alt="Wandere und Jogge">
+    <div class="txt"><h3>🥾 Wandere & Jogge</h3><p>Si bruucht Bewegig — 20 km z Fuess si kei Sälteheit</p></div>
+  </div>
+  <div class="hobby-card">
+    <img src="images/fabi-kanu-paddeln.jpg" alt="Draussen underwegs">
+    <div class="txt"><h3>🛶 Draussen underwegs</h3><p>Kanu, Vinschgau, See — Hauptsach frischi Luft</p></div>
+  </div>
+  <div class="hobby-card">
+    <img src="images/fabi-wein-schnuppern.jpg" alt="Guet Ässe & Trinke">
+    <div class="txt"><h3>🍷 Guet Ässe & es Glas gniesse</h3><p>Fancy, hip, aber ohni 3-Stärne-Zwang</p></div>
   </div>
 
   <div class="nav-grid">
     <div class="nav-card" style="cursor:default">
       <div class="icon">📚</div>
-      <div class="txt"><h3>Lesen</h3><p>Ruhige Nachmittage mit einem guten Buch</p></div>
+      <div class="txt"><h3>Läse</h3><p>Ruehigi Namittäg mit eme guete Buech</p></div>
     </div>
     <div class="nav-card" style="cursor:default">
       <div class="icon">🎧</div>
-      <div class="txt"><h3>Techno-Festivals</h3><p>Und ab und zu ein gediegener Absturz an der Langstrasse</p></div>
-    </div>
-    <div class="nav-card" style="cursor:default">
-      <div class="icon">🥾</div>
-      <div class="txt"><h3>Wandern und spazieren</h3><p>Sie braucht Bewegung — 20 km zu Fuss sind keine Seltenheit</p></div>
+      <div class="txt"><h3>Techno-Festivals</h3><p>Und hie und da en gsittete Absturz a de Langstross</p></div>
     </div>
     <div class="nav-card" style="cursor:default">
       <div class="icon">🛍️</div>
-      <div class="txt"><h3>Shopping</h3><p>Egal ob Zürich oder im Ausland</p></div>
+      <div class="txt"><h3>Shoppe</h3><p>Egal ob z Züri oder im Usland</p></div>
     </div>
     <div class="nav-card" style="cursor:default">
       <div class="icon">🧼</div>
-      <div class="txt"><h3>Putzen (im Ernst)</h3><p>Ordnung zuhause ist nicht verhandelbar</p></div>
-    </div>
-    <div class="nav-card" style="cursor:default">
-      <div class="icon">🥗</div>
-      <div class="txt"><h3>Gesund essen</h3><p>Wenig Zucker, viel Protein — Schoggi bleibt trotzdem Pflicht</p></div>
+      <div class="txt"><h3>Putze (im Ernscht)</h3><p>Ornig dehei isch nöd verhandelbar</p></div>
     </div>
   </div>
 </div>

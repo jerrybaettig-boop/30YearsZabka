@@ -7,24 +7,62 @@
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<header class="top"><a href="index.html">← zurück</a></header>
+<header class="stickynav">
+  <a href="index.html" class="brand">🐸 Zabka-Fäscht</a>
+  <a href="index.html" class="back">← zrugg</a>
+</header>
 <div class="wrap">
   <div class="card">
     <div class="tag">The beginning</div>
-    <h1>Ein legendärer Einstieg</h1>
-    <p>Es fing an, wie so vieles Gute im Leben: mit einer Mama, die eine Idee hatte. Fabis Mutter fand, ihr Bruder solle uns zusammenbringen — und so landeten wir eines Abends gemeinsam an der Langstrasse.</p>
-    <p>Karaoke-Bar Kanban zum Aufwärmen, danach rein in den Club Gonzo. Ein steiler, legendärer Einstieg in alles, was noch kommen sollte. Ihr Bruder war natürlich auch dabei — bis wir ihn irgendwann in ein eigenes Uber verfrachten mussten, weil er das Tempo nicht mehr mithalten konnte.</p>
+    <h1>E legendäre Iistig</h1>
+    <p>Agfange hät's, wie so viles Guet im Läbe: mit re Mama, wo n' Idee gha hät. D Mueter vor Fabi hät gfunde, ihre Brüeder söll üs zämebringe – und so si mir eis Znacht zäme a de Langstross glandet.</p>
+    <p>Karaoke-Bar Kanban zum Ufwärme, danach ab id Club Gonzo. E steile, legendäre Iistig in alles, wo no chunnt isch. Ihre Brüeder isch natürlich au debii gsi – bis mer ihn irgendwenn i sis eigets Uber packe mueste, will er s Tempo nüm mitcho isch.</p>
+
+    <div class="slideshow" id="beginning-slides">
+      <img src="images/fabi-portrait-1.jpg" class="active" alt="Fabi">
+      <img src="images/fabi-neon-portrait.jpg" alt="Fabi">
+      <img src="images/fabi-wein-schnuppern.jpg" alt="Fabi">
+      <button class="arrow left" onclick="moveSlide(-1)">‹</button>
+      <button class="arrow right" onclick="moveSlide(1)">›</button>
+      <div class="dots"></div>
+    </div>
+    <video controls style="width:100%; border-radius:18px; margin-bottom:6px; background:#000;" poster="images/fabi-portrait-1.jpg">
+      <source src="images/video-beginning.mp4" type="video/mp4">
+      Dis Video wird bald da si.
+    </video>
+    <p class="small" style="margin-top:-8px">📹 Datei mit Name "video-beginning.mp4" i de images-Ordner lade, dänn lauft's automatisch.</p>
 
     <div class="divider"></div>
 
-    <h2>Das erste richtige Date</h2>
-    <p>Abgeholt wurde sie mit dem Auto, dann ging's nach Winterthur ins "Nachbarsgarten" — mein Lieblingsrestaurant — für ein klassisches Cordon Bleu. Danach ein Spaziergang, und irgendwann war klar: sie wollte noch mit nach Hause kommen.</p>
+    <h2>S erschte richtig Date</h2>
+    <p>Abgholt worde isch si mit em Auto, dänn isch's ab id Winterthur is "Nachbarsgarte" – mis Liebligsrestaurant – für es klassischs Cordon Bleu. Danach na chli spaziere, und irgendwenn isch klar gsi: si wett no mit hei cho.</p>
 
     <div class="divider"></div>
 
-    <h2>Offiziell seit einem coolen Datum</h2>
-    <p>Kennengelernt haben wir uns bereits im Januar 2022, offiziell zusammen sind wir aber erst seit dem <b>11.11.22</b> — weil ein Datum, das man rückwärts und vorwärts lesen kann, einfach zu gut war, um es zu verpassen.</p>
+    <h2>Offiziell sit eme geile Datum</h2>
+    <p>Kennegleert hend mer üs scho im Januar 2022, offiziell zäme si mer aber erscht sit em <b>11.11.22</b> – will es Datum, wo mer vor- und rückwärts läse cha, eifach z guet gsi isch zum verpasse.</p>
   </div>
 </div>
+
+<script>
+let idx = 0;
+const imgs = document.querySelectorAll('#beginning-slides img');
+const dotsWrap = document.querySelector('#beginning-slides .dots');
+imgs.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = () => goSlide(i);
+  dotsWrap.appendChild(d);
+});
+function goSlide(i){
+  imgs[idx].classList.remove('active');
+  dotsWrap.children[idx].classList.remove('active');
+  idx = (i+imgs.length)%imgs.length;
+  imgs[idx].classList.add('active');
+  dotsWrap.children[idx].classList.add('active');
+}
+function moveSlide(dir){ goSlide(idx+dir); }
+setInterval(()=>moveSlide(1), 4000);
+</script>
 </body>
 </html>
