@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dein perfekter Trip</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap"><div class="card" id="app"></div></div>
+
+<script>
+/* WICHTIG: Formspree-Endpoint nach dem Erstellen eines kostenlosen Accounts hier eintragen */
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/DEIN_CODE_HIER";
+
+/* Zugriffsschutz: nur wenn Passcode-Quiz gelöst wurde */
+if(sessionStorage.getItem("geschenk-unlocked") !== "1"){
+  window.location.href = "index.html";
+}
+
+const DESTS = [
+  {id:'porto', name:'Porto', land:'Portugal', blurb:'Steile Gassen, Portwein-Keller und die schönste Brücke über den Douro.', party:1, nature:1, culture:3, budget:1, warmth:3},
+  {id:'madrid', name:'Madrid', land:'Spanien', blurb:'Tapas-Hopping, Museen bis Mitternacht, Nachtleben bis zum Sonnenaufgang.', party:3, nature:0, culture:3, budget:2, warmth:3},
+  {id:'oslo', name:'Oslo', land:'Norwegen', blurb:'Fjord-Luft, Design-Cafés und Natur direkt vor der Haustür.', party:1, nature:3, culture:1, budget:3, warmth:0},
+  {id:'friedrichstadt', name:'Friedrichstadt', land:'Nordfriesland, DE', blurb:'Kleine holländische Grachtenstadt, flaches Land, Ruhe und frische Nordsee-Luft.', party:0, nature:3, culture:1, budget:1, warmth:1},
+  {id:'edinburgh', name:'Edinburgh', land:'Schottland', blurb:'Mittelalterliche Altstadt, Whisky-Bars und Hügel mit Aussicht über die Stadt.', party:2, nature:2, culture:3, budget:2, warmth:1},
+  {id:'paris', name:'Paris', land:'Frankreich', blurb:'Croissants, Kunst, Seine-Ufer und der Charme der ewigen Filmkulisse.', party:2, nature:0, culture:3, budget:3, warmth:2},
+  {id:'lissabon', name:'Lissabon', land:'Portugal', blurb:'Tramfahrten durch die Hügel, Sonnenuntergänge, entspannter Beach-Vibe nebenan.', party:2, nature:1, culture:2, budget:1, warmth:3},
+  {id:'kopenhagen', name:'Kopenhagen', land:'Dänemark', blurb:'Fahrrad-Stadt mit Design, Hygge und feiner Küche am Wasser.', party:2, nature:1, culture:2, budget:3, warmth:1},
+];
+
+const QUESTIONS = [
+  {q:'In welcher Jahreszeit stellst du dir die Reise am ehesten vor?', type:'text', opts:[
+    {t:'Frühling 🌸'},{t:'Sommer ☀️', warmth:1},{t:'Herbst 🍂'},{t:'Winter ❄️', warmth:-1}
+  ]},
+  {q:'Was zieht dich mehr an?', type:'image', opts:[
+    {t:'Sonne, Strand und Meer', img:'../images/quiz-warm.jpg', warmth:3},
+    {t:'Landschaft, frische Luft, gemütliche Pubs', img:'../images/quiz-cold.jpg', warmth:-3, nature:1}
+  ]},
+  {q:'Diese oder das?', type:'image', opts:[
+    {t:'Rooftop-Bar bis 3 Uhr morgens', img:'../images/quiz-party.jpg', party:3, companion:-1},
+    {t:'Gemütlicher Lesenachmittag', img:'../images/quiz-chill.jpg', party:-2, culture:1}
+  ]},
+  {q:'Beim Essen bist du eher...', type:'text', opts:[
+    {t:'Fancy Street-Food-Markt, Hauptsache lecker', budget:-1, culture:1},
+    {t:'Hippes veggie Restaurant, Insta-tauglich', budget:1, culture:2}
+  ]},
+  {q:'Was klingt verlockender?', type:'text', opts:[
+    {t:'Techno-Festival-Lineup durchforsten', party:2},
+    {t:'Lesecafé mit Aussicht', party:-2, nature:1}
+  ]},
+  {q:'Koffer ist schon 3 Wochen vorher gepackt — was kommt zuerst rein?', type:'image', opts:[
+    {t:'Wanderschuhe', img:'../images/quiz-wandern.jpg', nature:2},
+    {t:'Das schickste Ausgeh-Outfit', img:'../images/quiz-ausgehen.jpg', party:1, budget:1}
+  ]},
+  {q:'Wie viele Höhenmeter am Tag sind ok für die perfekte Reise?', type:'text', opts:[
+    {t:'0, ich chille am Pool', nature:-2, budget:1},
+    {t:'Ein bisschen wandern ist schön', nature:1},
+    {t:'2000 wie am Choquequirao, bring it on', nature:3}
+  ]},
+  {q:'Nach einer 12h-Schicht auf der Intensivstation braucht sie am meisten...', type:'text', opts:[
+    {t:'Ruhe und Natur pur', nature:2},
+    {t:'Ausgehen und den Kopf freitanzen', party:2},
+    {t:'Erstmal aufräumen und Ordnung schaffen', culture:0}
+  ]},
+  {q:'Im Hotelzimmer angekommen machst du zuerst...', type:'image', opts:[
+    {t:'Koffer auspacken und alles einräumen', img:'../images/quiz-ordnung.jpg'},
+    {t:'Sofort raus und die Stadt erkunden', img:'../images/quiz-erkunden.jpg', culture:1}
+  ]},
+  {q:'Ein Ort mit Kakerlaken-Risiko ist für dich...', type:'text', opts:[
+    {t:'No-Go, sofort Hotel wechseln (Hawaii lässt grüssen)', budget:1},
+    {t:'Auszuhalten, solange der Rest stimmt'}
+  ]},
+  {q:'Street-Food oder Fine Dining?', type:'text', opts:[
+    {t:'Street-Food, Hauptsache lecker und günstig', budget:-2},
+    {t:'Fine Dining, aber keine 3-Sterne-Nötigkeit', budget:2}
+  ]},
+  {q:'Dein Food-Style unterwegs?', type:'text', opts:[
+    {t:'Hip, vegetarisch, Insta-tauglich', culture:1, budget:1},
+    {t:'Klassisch Street-Food', budget:-1},
+    {t:'Alles, solange gesund und proteinreich', culture:0}
+  ]},
+  {q:'Playlist fürs Roadtrip-Auto?', type:'image', opts:[
+    {t:'Techno, bis der Bass wackelt', img:'../images/quiz-techno.jpg', party:2},
+    {t:'Neue-deutsche Chart-Bangers zum Mitsingen', img:'../images/quiz-charts.jpg', party:1, culture:1}
+  ]},
+  {q:'Stell dir die Reise vor — wer ist dabei?', type:'text', opts:[
+    {t:'Nur wir zwei, Zabka und Knobli', companion:2},
+    {t:'Die ganze Crew, Party-Modus an', companion:-2},
+    {t:'Überrasch mich', companion:0}
+  ]},
+  {q:'Perfekter Abend?', type:'text', opts:[
+    {t:'Karaoke und Club bis spät, wie im Kanban', companion:-2, party:2},
+    {t:'Ruhiges Dinner, nur wir zwei', companion:2}
+  ]},
+  {q:'Dein Budget-Gefühl für diesen Trip?', type:'text', opts:[
+    {t:'Luxuriös, ich will verwöhnt werden', budget:3},
+    {t:'Authentisch und bodenständig', budget:-1},
+    {t:'Solide Mittelklasse reicht völlig', budget:1}
+  ]},
+  {q:'20 km zu Fuss — lieber durch...', type:'image', opts:[
+    {t:'Wald und Berge', img:'../images/quiz-natur.jpg', nature:3},
+    {t:'Strassen und Shops einer Grossstadt', img:'../images/quiz-stadt.jpg', culture:2}
+  ]},
+  {q:'Dein bisheriges Reise-Highlight war eher wie...', type:'text', opts:[
+    {t:'Peru/Kolumbien: Abenteuer und Kultur pur', culture:2, nature:2},
+    {t:'Tromsø: Ruhe, Landschaft, Kälte', nature:3, warmth:-2},
+    {t:'Athen: Stadt-Flair und Geschichte', culture:3}
+  ]},
+  {q:'Was killt die Reise-Laune garantiert?', type:'text', opts:[
+    {t:'Rumsitzen, nichts erleben', nature:1, culture:1},
+    {t:'Kakerlaken im Zimmer', budget:0}
+  ]},
+  {q:'Wenn die Reise ein Motto hätte, wäre es...', type:'image', opts:[
+    {t:'Chaos, das am Ende doch klappt', img:'../images/quiz-abenteuer.jpg', nature:2},
+    {t:'Sonne, Meer, nichts tun', img:'../images/quiz-sonne.jpg', warmth:2, budget:1}
+  ]},
+];
+
+let state = {
+  step: 0,
+  answers: [],
+  axes: {party:0, nature:0, culture:0, budget:0, companion:0, warmth:0},
+  season: '',
+  top2: [],
+  chosen: null,
+  dates: {wish:{from:'',to:''}, alt1:{from:'',to:''}, alt2:{from:'',to:''}}
+};
+
+function computeMatches(){
+  const scored = DESTS.map(d=>{
+    const diff = Math.abs(d.party-state.axes.party)+Math.abs(d.nature-state.axes.nature)+
+                 Math.abs(d.culture-state.axes.culture)+Math.abs(d.budget-state.axes.budget)+
+                 Math.abs(d.warmth-state.axes.warmth);
+    return {...d, score:-diff};
+  });
+  scored.sort((a,b)=>b.score-a.score);
+  return scored.slice(0,2);
+}
+
+function render(){
+  const app = document.getElementById('app');
+  if(state.step === 0) app.innerHTML = renderIntro();
+  else if(state.step >= 1 && state.step <= QUESTIONS.length) app.innerHTML = renderQuestion(state.step-1);
+  else if(state.step === QUESTIONS.length+1) app.innerHTML = renderReveal();
+  else if(state.step === QUESTIONS.length+2) app.innerHTML = renderDates();
+  else if(state.step === QUESTIONS.length+3) app.innerHTML = renderThanks();
+  attachEvents();
+}
+
+function renderIntro(){
+  return `
+    <div class="emoji-big">🧳🐸</div>
+    <h1 style="text-align:center">Dein perfekter Trip wartet</h1>
+    <p style="text-align:center">20 Fragen, viele davon typisch dich. Am Ende weiss die App genau, wohin die Reise geht — du entscheidest den Rest.</p>
+    <div class="center"><button class="btn" id="start">Los geht's</button></div>
+  `;
+}
+
+function renderQuestion(i){
+  const q = QUESTIONS[i];
+  const pct = Math.round((i/QUESTIONS.length)*100);
+  const opts = q.type === 'image'
+    ? `<div class="img-grid">${q.opts.map((o,idx)=>`
+        <button class="opt-img" data-i="${idx}">
+          <img src="${o.img}" alt="${o.t}" onerror="this.style.display='none'">
+          <div class="cap">${o.t}</div>
+        </button>`).join('')}</div>`
+    : `<div class="opt-grid">${q.opts.map((o,idx)=>`<button class="opt" data-i="${idx}">${o.t}</button>`).join('')}</div>`;
+  return `
+    <div class="tag">Frage ${i+1} von ${QUESTIONS.length}</div>
+    <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
+    <h2>${q.q}</h2>
+    ${opts}
+  `;
+}
+
+function renderReveal(){
+  state.top2 = computeMatches();
+  const c = state.axes.companion;
+  const companionLabel = c > 0 ? 'zu zweit, ganz romantisch 💞' : c < 0 ? 'mit Freunden, viel Trubel 🎉' : 'offen für beides 🤷';
+  return `
+    <div class="emoji-big">🎯</div>
+    <h1 style="text-align:center">Match gefunden!</h1>
+    <p style="text-align:center">Reise-Vibe: <b>${companionLabel}</b><br>Hier sind deine zwei Top-Matches. Wähl aus:</p>
+    <div class="dest-grid">
+      ${state.top2.map(d=>`
+        <button class="dest-card" data-id="${d.id}">
+          <div class="name">${d.name} <span style="font-weight:400;font-size:13px;color:var(--ink-soft)">— ${d.land}</span></div>
+          <p class="blurb">${d.blurb}</p>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderDates(){
+  return `
+    <div class="tag">Fast geschafft</div>
+    <h2>Wann soll's losgehen?</h2>
+    <p>Gib ein verlängertes Wochenende als Wunschtermin an, plus zwei Alternativen.</p>
+    <div class="field"><label>🌟 Wunschtermin</label><div class="daterow">
+      <input type="date" id="wish-from"><input type="date" id="wish-to"></div></div>
+    <div class="field"><label>Alternative 1</label><div class="daterow">
+      <input type="date" id="alt1-from"><input type="date" id="alt1-to"></div></div>
+    <div class="field"><label>Alternative 2</label><div class="daterow">
+      <input type="date" id="alt2-from"><input type="date" id="alt2-to"></div></div>
+    <div class="center" style="margin-top:22px"><button class="btn" id="submit-dates">Speichern und abschicken</button></div>
+  `;
+}
+
+function renderThanks(){
+  return `
+    <div class="emoji-big">🎁</div>
+    <h1 style="text-align:center">Auf dem Weg!</h1>
+    <p style="text-align:center">Deine Antworten sind unterwegs. Lehn dich zurück — der Rest ist jetzt nicht mehr dein Problem. 🧡</p>
+  `;
+}
+
+function attachEvents(){
+  const start = document.getElementById('start');
+  if(start) start.onclick = () => { state.step = 1; render(); };
+
+  document.querySelectorAll('.opt, .opt-img').forEach(btn=>{
+    btn.onclick = () => {
+      const i = state.step-1;
+      const q = QUESTIONS[i];
+      const opt = q.opts[btn.dataset.i];
+      state.answers.push({question:q.q, answer:opt.t});
+      if(i === 0) state.season = opt.t;
+      ['party','nature','culture','budget','companion','warmth'].forEach(ax=>{
+        if(opt[ax]) state.axes[ax] += opt[ax];
+      });
+      state.step++;
+      render();
+    };
+  });
+
+  document.querySelectorAll('.dest-card').forEach(btn=>{
+    btn.onclick = () => {
+      state.chosen = state.top2.find(d=>d.id===btn.dataset.id);
+      state.step++;
+      render();
+    };
+  });
+
+  const submitDates = document.getElementById('submit-dates');
+  if(submitDates){
+    submitDates.onclick = async () => {
+      state.dates.wish.from = document.getElementById('wish-from').value;
+      state.dates.wish.to = document.getElementById('wish-to').value;
+      state.dates.alt1.from = document.getElementById('alt1-from').value;
+      state.dates.alt1.to = document.getElementById('alt1-to').value;
+      state.dates.alt2.from = document.getElementById('alt2-from').value;
+      state.dates.alt2.to = document.getElementById('alt2-to').value;
+      await submitToFormspree();
+      state.step++;
+      render();
+    };
+  }
+}
+
+async function submitToFormspree(){
+  const payload = {
+    season: state.season,
+    chosenDestination: state.chosen ? `${state.chosen.name} — ${state.chosen.land}` : '',
+    topMatches: state.top2.map(d=>d.name).join(', '),
+    wunschtermin: `${state.dates.wish.from} bis ${state.dates.wish.to}`,
+    alternative1: `${state.dates.alt1.from} bis ${state.dates.alt1.to}`,
+    alternative2: `${state.dates.alt2.from} bis ${state.dates.alt2.to}`,
+    alle_antworten: state.answers.map(a=>`${a.question} -> ${a.answer}`).join(' | ')
+  };
+  try{
+    await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'Accept':'application/json'},
+      body: JSON.stringify(payload)
+    });
+  }catch(e){
+    console.error('Formspree-Versand fehlgeschlagen', e);
+  }
+}
+
+render();
+</script>
+</body>
+</html>

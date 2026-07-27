@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dein Geschenk wartet</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="wrap"><div id="app" class="card"></div></div>
+
+<script>
+const CODE = "111122"; // 11.11.22
+
+const QUESTIONS = [
+  {
+    q: "Wo haben wir uns kennengelernt?",
+    opts: [
+      "Auf einer Dating-App",
+      "Über deinen Bruder — ein legendärer Abend an der Langstrasse (Kanban → Gonzo)",
+      "An einer Hochzeit gemeinsamer Freunde",
+      "Im Fitnessstudio"
+    ],
+    correct: 1
+  },
+  {
+    q: "Wie sah unser erstes richtiges Date aus?",
+    opts: [
+      "Pizza irgendwo in Zürich",
+      "Kino und Popcorn",
+      "Cordon Bleu im Nachbarsgarten in Winterthur, danach ein Spaziergang",
+      "Brunch am Sonntagmorgen"
+    ],
+    correct: 2
+  },
+  {
+    q: "Seit welchem Datum sind wir offiziell zusammen?",
+    opts: ["14.02.2022", "01.01.2023", "11.11.2022", "24.12.2022"],
+    correct: 2
+  },
+  {
+    q: "Wie nenne ich sie, wenn wir in Südamerika unterwegs sind?",
+    opts: ["Gorda", "Ranita", "Mariposa", "Chiquita"],
+    correct: 1
+  },
+  {
+    q: "Was hat sie bei unserem ersten Kennenlernen am liebsten gegessen?",
+    opts: ["Sushi", "Salat", "Burger im Burgermeister an der Sihlpost", "Döner"],
+    correct: 2
+  },
+  {
+    q: "Was war unser bisher verrücktestes Erlebnis?",
+    opts: [
+      "Ein verpasster Flug in Bangkok",
+      "Eine nachts organisierte Alternativ-Tour zum Machu Picchu — mit gemietetem Rucksack und dubiosem Typen",
+      "Ein Sturm auf einem Kreuzfahrtschiff",
+      "Eine Autopanne mitten in der Wüste"
+    ],
+    correct: 1
+  }
+];
+
+let step = 0;
+let revealed = "";
+
+function render(){
+  const app = document.getElementById("app");
+  if(step === 0){
+    app.innerHTML = `
+      <div class="emoji-big">🔒🐸</div>
+      <h1 style="text-align:center">Bevor du weiter kannst...</h1>
+      <p style="text-align:center">Ein paar Fragen zu uns. Jede richtige Antwort deckt eine Ziffer eines Codes auf. Am Schluss weisst du, was sich öffnet.</p>
+      <div class="center"><button class="btn" id="start">Los</button></div>
+    `;
+    document.getElementById("start").onclick = () => { step = 1; render(); };
+    return;
+  }
+  if(step >= 1 && step <= QUESTIONS.length){
+    const q = QUESTIONS[step-1];
+    const pct = Math.round(((step-1)/QUESTIONS.length)*100);
+    app.innerHTML = `
+      <div class="tag">Frage ${step} von ${QUESTIONS.length}</div>
+      <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
+      <h2>${q.q}</h2>
+      <div class="opt-grid">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join("")}
+      </div>
+      <p class="small" id="code-progress">Code bisher: ${revealed || "—"}</p>
+    `;
+    document.querySelectorAll(".opt").forEach(btn=>{
+      btn.onclick = () => {
+        const i = parseInt(btn.dataset.i);
+        if(i === q.correct){
+          revealed += CODE[step-1];
+          btn.classList.add("correct");
+          setTimeout(()=>{ step++; render(); }, 500);
+        } else {
+          btn.classList.add("wrong");
+          setTimeout(()=>btn.classList.remove("wrong"), 600);
+        }
+      };
+    });
+    return;
+  }
+  // done
+  sessionStorage.setItem("geschenk-unlocked", "1");
+  app.innerHTML = `
+    <div class="emoji-big">🔓</div>
+    <h1 style="text-align:center">Code entdeckt</h1>
+    <div class="center" style="font-size:38px; font-weight:800; letter-spacing:3px; margin:12px 0 20px;">11.11.22</div>
+    <p style="text-align:center">Genau das Datum, an dem alles offiziell wurde. Und genau deshalb ist es auch der Schlüssel zu deinem Geschenk.</p>
+    <div class="center"><button class="btn" id="continue">Geschenk öffnen</button></div>
+  `;
+  document.getElementById("continue").onclick = () => { window.location.href = "quiz.html"; };
+}
+
+render();
+</script>
+</body>
+</html>
