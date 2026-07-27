@@ -20,14 +20,14 @@ const QUESTIONS = [
     opts: ["Über Tinder", "Über min Brüeder", "Ah re Hochzit vo Fründe", "Im Fitnessstudio"], correct: 1 },
   { q: "Wohin sind mer für's erschte Date gfahre?",
     opts: ["Pizza z Züri", "Kino und Popcorn", "Nachbarsgarte, Winterthur", "Brunch am Sonntig"], correct: 2 },
-  { q: "Wie hät üses Häsli gheisse?",
+  { q: "Wie hät am Lauri und Jerry ihres Häsli gheisse?",
     opts: ["Bugs", "Blacky", "Karotte", "Shadow"], correct: 1 },
-  { q: "Und wie hät üses Meerschwiili gheisse (obwohl's e Sie gsi isch)?",
+  { q: "Und wie hät ihres Meersüüli gheisse?",
     opts: ["Herkules", "Simba", "Speedy", "Whiskers"], correct: 0 },
   { q: "Wie nänn ich dich, wenn mer i Südamerika underwegs sind?",
     opts: ["Gorda", "Ranita", "Mariposa", "Chiquita"], correct: 1 },
-  { q: "Was hesch du früener, wo mer üs kennegleert hend, immer bstellt?",
-    opts: ["Sushi", "Salat", "Burgermeister-Burger", "Döner"], correct: 2 },
+  { q: "Was hesch du früener, wo mer üs kennegleert hend, meistens gesse oder bstellt?",
+    opts: ["Sushi", "Salat", "Burger", "Döner"], correct: 2 },
   { q: "Was isch üses verruckteschte Erläbnis gsi?",
     opts: ["Fluag verpasst z Bangkok", "Alternativ-Tour zum Machu Picchu", "Sturm uf emne Kreuzfahrtschiff", "Autopanne i de Wüeschti"], correct: 1 },
   { q: "Syt welem Datum sind mer offiziell zäme?",
@@ -70,7 +70,11 @@ function render(){
           setTimeout(()=>{ step++; render(); }, 500);
         } else {
           btn.classList.add("wrong");
-          setTimeout(()=>btn.classList.remove("wrong"), 600);
+          setTimeout(()=>{
+            alert("Falsch! Das git jetzt en Shot für dich oder din Lieblingsmänsch dinere Wahl :P Los geht's nomol vo vorne...");
+            step = 0; revealed = "";
+            render();
+          }, 400);
         }
       };
     });

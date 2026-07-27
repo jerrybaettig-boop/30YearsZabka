@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rettet d Fabi!</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.twint-card{background:linear-gradient(135deg,#FFD37A,#FF9FC0); border-radius:20px; padding:24px; text-align:center; margin-top:16px;}
+.twint-number{font-family:'Baloo 2',sans-serif; font-size:26px; font-weight:800; color:#123024; letter-spacing:1px; margin:10px 0;}
+.copy-msg{font-size:12px; color:#123024; height:16px;}
+</style>
+</head>
+<body>
+<header class="stickynav">
+  <a href="index.html" class="brand">🐸 Zabka-Fäscht</a>
+  <a href="index.html" class="back">← zrugg</a>
+</header>
+<div class="wrap">
+  <div class="card">
+    <div class="emoji-big">😭🛍️🍫</div>
+    <div class="tag">Notruf</div>
+    <h1>Rettet d Fabi!</h1>
+    <p>Liebi Fäscht-Gäscht, mer müend ganz ehrlich si: d Fabi läbt wit über ihri Verhältnis. Shoppe, Schoggi und öppis Feins im Usgang chöschte eifach ihre Tribut. Ihres Lieblings-Hobby "Geld usgäh für Sache wo si nöd bruucht" hät scho lang d Kontrolle übernoh.</p>
+    <p>Mit dinere Gross-/Chlispände hilfsch ihre, würdevoll witer z läbe — mindeschtens bis zum nächschte Schoggi-Regal.</p>
+  </div>
+
+  <div class="twint-card">
+    <div style="font-size:32px">🐸💸</div>
+    <p style="margin:6px 0 0; color:#123024; font-weight:700;">Twint a die Nummer:</p>
+    <div class="twint-number" id="twint-num">+41 76 391 38 06</div>
+    <button class="btn secondary" id="copy-btn">Nummer kopiere</button>
+    <div class="copy-msg" id="copy-msg"></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <p class="small" style="margin:0">100% vo dim Gäld geit direkt a Schoggi, Shopping-Touren und "nötigi" Spontanchäuf. Merci für dis Härz! 💚</p>
+  </div>
+</div>
+
+<script>
+document.getElementById('copy-btn').onclick = () => {
+  navigator.clipboard.writeText('+41 76 391 38 06').then(() => {
+    document.getElementById('copy-msg').textContent = 'Kopiert! Ab id Twint-App dermit 🐸';
+  }).catch(() => {
+    document.getElementById('copy-msg').textContent = 'Nummer vo Hand abschriibe: +41 76 391 38 06';
+  });
+};
+</script>
+</body>
+</html>

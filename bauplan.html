@@ -3,19 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>De Bauplan vo de Fabi</title>
+<title>De Vitruvianisch Fabi</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.blueprint{
-  background:#0f2d4a;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 28px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 28px);
-  border-radius:20px; padding:20px 12px; box-shadow:0 12px 34px rgba(15,45,74,0.4);
+.vitruv-frame{
+  position:relative; background:#ede3cf; border-radius:20px; padding:14px;
+  box-shadow:0 12px 34px rgba(90,70,30,0.3); border:6px solid #d8c9a3;
 }
-.blueprint svg{width:100%; height:auto; display:block;}
-.blueprint-title{text-align:center; color:#EAF7EC; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:18px; margin-top:6px; letter-spacing:1px;}
-.blueprint-sub{text-align:center; color:#8FB8D9; font-size:11px; letter-spacing:2px; margin-top:2px;}
+.vitruv-inner{position:relative; width:100%; aspect-ratio:2258/3070; border-radius:6px; overflow:hidden; background:#e9dfc7;}
+.vitruv-inner img.art{position:absolute; inset:0; width:100%; height:100%; object-fit:contain;}
+.fabi-head{position:absolute; left:50%; top:11.5%; width:15%; aspect-ratio:1/1; transform:translate(-50%,-50%) rotate(-2deg); border-radius:50%; overflow:hidden; border:3px solid #7a6a3f; box-shadow:0 4px 10px rgba(0,0,0,0.35);}
+.fabi-head img{width:100%; height:100%; object-fit:cover;}
+.censor{position:absolute; transform:translate(-50%,-50%); font-size:8vw; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4)); user-select:none;}
+.censor.groin{left:50%; top:54%;}
+.censor.chestL{left:44.5%; top:33%; font-size:5vw;}
+.censor.chestR{left:55.5%; top:33%; font-size:5vw;}
+.vitruv-caption{text-align:center; color:#5c4a26; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:13px; margin-top:10px; letter-spacing:1px;}
+.spec-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
+@media (max-width:400px){ .spec-grid{grid-template-columns:1fr;} }
+.spec-card{background:var(--card); border:2px solid #E3F5E9; border-radius:16px; padding:14px 16px;}
+.spec-card .spec-icon{font-size:24px; margin-bottom:4px; display:block;}
+.spec-card h3{margin-bottom:2px; font-size:14.5px;}
+.spec-card p{margin:0; font-size:12.5px;}
 </style>
 </head>
 <body>
@@ -27,54 +36,30 @@
   <div class="card">
     <div class="tag">Technischi Doku</div>
     <h1>De Vitruvianisch Fabi</h1>
-    <p>Ideale Proportione, wüsseschaftlich dokumentiert (ungefähr).</p>
+    <p>Ideale Proportione, wüsseschaftlich dokumentiert (ungefähr). Family-friendly zensiert mit Frösch. 🐸</p>
   </div>
 
-  <div class="blueprint">
-    <svg viewBox="0 0 480 620" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <clipPath id="headClip"><circle cx="240" cy="112" r="46"/></clipPath>
-      </defs>
-      <!-- Konstruktionskreis -->
-      <circle cx="240" cy="330" r="185" fill="none" stroke="#6FCF97" stroke-width="1.5" stroke-dasharray="4 4"/>
-      <!-- Konstruktionsquadrat -->
-      <rect x="90" y="150" width="300" height="300" fill="none" stroke="#FFD37A" stroke-width="1.5" stroke-dasharray="4 4"/>
-
-      <!-- Arme horizontal (Quadrat) -->
-      <line x1="95" y1="200" x2="385" y2="200" stroke="#EAF7EC" stroke-width="3" stroke-linecap="round"/>
-      <!-- Arme diagonal erhoben (Kreis) -->
-      <line x1="240" y1="200" x2="112" y2="150" stroke="#EAF7EC" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
-      <line x1="240" y1="200" x2="368" y2="150" stroke="#EAF7EC" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
-
-      <!-- Rumpf -->
-      <line x1="240" y1="158" x2="240" y2="400" stroke="#EAF7EC" stroke-width="3" stroke-linecap="round"/>
-      <ellipse cx="240" cy="270" rx="46" ry="82" fill="none" stroke="#EAF7EC" stroke-width="2" opacity="0.7"/>
-
-      <!-- Bein zäme (Quadrat) -->
-      <line x1="240" y1="400" x2="212" y2="512" stroke="#EAF7EC" stroke-width="3" stroke-linecap="round"/>
-      <line x1="240" y1="400" x2="268" y2="512" stroke="#EAF7EC" stroke-width="3" stroke-linecap="round"/>
-      <!-- Bein gspreizt (Kreis) -->
-      <line x1="240" y1="400" x2="140" y2="495" stroke="#EAF7EC" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-      <line x1="240" y1="400" x2="340" y2="495" stroke="#EAF7EC" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-
-      <!-- Kopf: echtes Foto, kreisrund -->
-      <circle cx="240" cy="112" r="46" fill="#123024" stroke="#6FCF97" stroke-width="2"/>
-      <image href="images/fabi-sticker.png" x="176" y="46" width="128" height="150" clip-path="url(#headClip)" preserveAspectRatio="xMidYMid slice"/>
-
-      <!-- Masslinien -->
-      <line x1="30" y1="150" x2="30" y2="450" stroke="#8FB8D9" stroke-width="1"/>
-      <line x1="24" y1="150" x2="36" y2="150" stroke="#8FB8D9" stroke-width="1"/>
-      <line x1="24" y1="450" x2="36" y2="450" stroke="#8FB8D9" stroke-width="1"/>
-      <text x="18" y="305" fill="#8FB8D9" font-size="11" text-anchor="middle" transform="rotate(-90 18 305)">1 ZABKA-HÖHI</text>
-
-      <text x="240" y="595" text-anchor="middle" fill="#FFD37A" font-family="Baloo 2, sans-serif" font-weight="700" font-size="15">MODELL ZABKA · PROPORZIONE 1:1 (RICS)</text>
-    </svg>
-    <div class="blueprint-title">DE VITRUVIANISCH FABI</div>
-    <div class="blueprint-sub">SKIZZE · MASSSTAB UNGEFÄHR · SERIE WINTERTHUR/ZÜRI</div>
+  <div class="vitruv-frame">
+    <div class="vitruv-inner">
+      <img class="art" src="https://upload.wikimedia.org/wikipedia/commons/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg" alt="Vitruvianischer Mensch" onerror="this.parentElement.style.background='#e9dfc7'">
+      <div class="fabi-head"><img src="images/fabi-sticker.png" alt="Fabi"></div>
+      <div class="censor groin">🐸</div>
+      <div class="censor chestL">🐸</div>
+      <div class="censor chestR">🐸</div>
+    </div>
+    <div class="vitruv-caption">MODELL ZABKA · PROPORZIONE 1:1 (RICS) · SERIE WINTERTHUR/ZÜRI</div>
   </div>
 
-  <div class="card" style="margin-top:16px">
-    <p style="margin:0">Ideali Proportione für: Wandere, Schlagfertigkeit, Ornig hebe und Frosch-Loyalität. Zertifiziert vom Chnobli-Institut. 💚</p>
+  <div class="spec-grid">
+    <div class="spec-card"><span class="spec-icon">🚑</span><h3>ICU-Turbo-Modus</h3><p>Bliibt ruehig, wenn's brennt</p></div>
+    <div class="spec-card"><span class="spec-icon">💬</span><h3>Schlagfertigkeits-Sensor</h3><p>Kontert schneller als du tippsch</p></div>
+    <div class="spec-card"><span class="spec-icon">🪳</span><h3>Kakerlaken-Alarm</h3><p>Löst sofort us, Fluchtreflex inklusive</p></div>
+    <div class="spec-card"><span class="spec-icon">🧼</span><h3>Ornig-Radar</h3><p>Erkennt Chaos uf 20 Meter</p></div>
+    <div class="spec-card"><span class="spec-icon">🐸</span><h3>Frosch-Loyalität</h3><p>Einmal Zabka, immer Zabka</p></div>
+    <div class="spec-card"><span class="spec-icon">🍫</span><h3>Süessigkeits-Speicher</h3><p>Chli, aber täglich in Betrieb</p></div>
+    <div class="spec-card"><span class="spec-icon">🧳</span><h3>Planungs-Prozessor</h3><p>Koffer parat, 3 Wuche vorher</p></div>
+    <div class="spec-card"><span class="spec-icon">🥾</span><h3>Wander-Motor</h3><p>Läuft au no bi 2000 Höhemeter</p></div>
+    <div class="spec-card"><span class="spec-icon">🌙</span><h3>Nacht-Modus</h3><p>Vo Buech bis Techno-Floor</p></div>
   </div>
 </div>
 </body>
