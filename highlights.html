@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Highlights in Bilder</title>
 <link rel="stylesheet" href="assets/style.css">
+<style>
+.gallery img{object-position:center 22%;}
+.padlet-slideshow{position:relative; width:100%; aspect-ratio:3/2; border-radius:18px; overflow:hidden; background:#123024;}
+.padlet-slideshow iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+.qr-row{display:flex; align-items:center; gap:16px; margin-top:14px;}
+.qr-row img{width:100px; height:100px; border-radius:12px; border:2px solid #E3F5E9; flex-shrink:0;}
+</style>
 </head>
 <body>
 <header class="stickynav">
@@ -13,29 +20,36 @@
 </header>
 <div class="wrap">
   <div class="card">
+    <div class="tag">Live vom Fäscht</div>
+    <h1>Teil dis Bild!</h1>
+    <p>QR-Code scanne oder Link öffne, Bild + Satz + Name poschte — läuft direkt hie als Diashow.</p>
+    <div class="padlet-slideshow">
+      <iframe src="https://padlet.com/embed/v1vvqu64s8zwareu/slideshow?autoplay=1&loop=1&duration=auto" allow="clipboard-write"></iframe>
+    </div>
+    <div class="qr-row">
+      <img src="images/padlet-qr.png" alt="QR-Code zur Padlet-Wand">
+      <div>
+        <p style="margin:0 0 6px 0; font-weight:700;">Scan mit em Handy, oder:</p>
+        <a class="btn secondary" href="https://padlet.com/jerrybaettig/fabi-memory-board-v1vvqu64s8zwareu" target="_blank" rel="noopener">Wand öffne & mitmache</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
     <div class="tag">Highlights</div>
     <h1>Die schönschte Momänt</h1>
     <p>Vo Südamerika über Tromsø bis London — es paar Bilder, wo zeige, firum die Frau eso vill Läbe hät.</p>
     <div class="gallery">
       <img src="images/fabi-hike-weinberg.jpg" alt="Wanderig im Vinschgau">
-      <img src="images/fabi-hike-stoecke.jpg" alt="Wanderig mit Stöck">
+      <img src="images/fabi-hike-stoecke.jpg" alt="Wanderig mit Stöck" style="object-position:center 30%">
       <img src="images/fabi-kanu-paddeln.jpg" alt="Kanu fahre">
       <img src="images/fabi-kanu-rueck.jpg" alt="Kanu Usflug">
-      <img src="images/fabi-europapark.jpg" alt="Europa Park">
-      <img src="images/fabi-dinner.jpg" alt="Znacht uswärts">
-      <img src="images/fabi-schlitten-schnee.jpg" alt="Schnee-Abentür">
-      <img src="images/fabi-spiel-jerry.jpg" alt="Spieliabig">
-      <img src="images/fabi-london-freundin.jpg" alt="London mit re Fründin">
-      <img src="images/fabi-joggen-peace.jpg" alt="Joggen">
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="tag">Für alli am Fäscht</div>
-    <h2>Teil dis eigets Bild!</h2>
-    <p>Häsch e schöni Erinnerig mit de Fabi? Poscht dis Bild + en Satz dezue direkt hie über Handy — jede cha's aluege.</p>
-    <div class="padlet-embed" style="border:1px solid rgba(0,0,0,0.1);border-radius:16px;box-sizing:border-box;overflow:hidden;position:relative;width:100%;background:#F4F4F4">
-      <p style="padding:0;margin:0"><iframe src="https://padlet.com/embed/v1vvqu64s8zwareu" frameborder="0" allow="camera;microphone;geolocation;display-capture;clipboard-write" style="width:100%;height:608px;display:block;padding:0;margin:0"></iframe></p>
+      <img src="images/fabi-europapark.jpg" alt="Europa Park" style="object-position:center 25%">
+      <img src="images/fabi-dinner.jpg" alt="Znacht uswärts" style="object-position:center 20%">
+      <img src="images/fabi-schlitten-schnee.jpg" alt="Schnee-Abentür" style="object-position:center 20%">
+      <img src="images/fabi-spiel-jerry.jpg" alt="Spieliabig" style="object-position:center 25%">
+      <img src="images/fabi-london-freundin.jpg" alt="London mit re Fründin" style="object-position:center 20%">
+      <img src="images/fabi-joggen-peace.jpg" alt="Joggen" style="object-position:center 20%">
     </div>
   </div>
 </div>

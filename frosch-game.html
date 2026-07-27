@@ -2,21 +2,25 @@
 <html lang="de-CH">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Zabka vs. Kakerlake</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.game-wrap{max-width:420px; margin:0 auto;}
+body{overscroll-behavior:none;}
+.game-page-wrap{max-width:480px; margin:0 auto; padding:16px;}
 #gameCanvas{width:100%; height:auto; display:block; border-radius:20px; touch-action:none; background:linear-gradient(180deg,#EAF7EC,#D8F0E0);}
 .game-shell{position:relative; border-radius:20px; overflow:hidden; box-shadow:0 12px 34px rgba(47,143,91,0.2); border:2px solid #E3F5E9;}
 .game-overlay{
-  position:absolute; inset:0; background:rgba(18,48,36,0.86); color:#fff;
+  position:absolute; inset:0; background:rgba(18,48,36,0.82); color:#fff;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding:24px; gap:12px;
+  text-align:center; padding:20px; gap:10px; z-index:5;
 }
 .game-overlay h2{font-family:'Baloo 2',sans-serif; font-size:24px; margin:0; color:#FFD37A;}
 .game-overlay p{color:#EAF7EC; margin:0; font-size:14px;}
-.game-hud{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--leaf-d);}
+.game-hud{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--leaf-d); font-size:15px;}
+.title-compact{margin-bottom:10px;}
+.title-compact h1{margin-bottom:2px; font-size:22px;}
+.title-compact p{margin:0; font-size:13px;}
 </style>
 </head>
 <body>
@@ -24,22 +28,19 @@
   <a href="index.html" class="brand">🐸 Zabka-Fäscht</a>
   <a href="index.html" class="back">← zrugg</a>
 </header>
-<div class="wrap">
-  <div class="card">
-    <div class="tag">Bonus-Gschänk</div>
-    <h1>Zabka vs. Kakerlake</h1>
-    <p>Wich de Kakerlake us, sammle Frösch. Bi 30 Frösch wartet öppis Süesses uf di... 🥃</p>
+<div class="game-page-wrap">
+  <div class="title-compact">
+    <h1>🪳 Zabka vs. Kakerlake</h1>
+    <p>Zieh mit Finger uf/ab. Kakerlake = Game Over. 30 Frösch = Shot mit Fabi!</p>
   </div>
 
-  <div class="game-wrap">
-    <div class="game-hud"><span id="score-display">🐸 0</span><span id="highscore-display">Rekord: 0</span></div>
-    <div class="game-shell">
-      <canvas id="gameCanvas" width="360" height="560"></canvas>
-      <div class="game-overlay" id="overlay">
-        <h2>Bereit?</h2>
-        <p>Zieh mit Finger/Muus uf und ab. Kakerlake = Game Over. Frösch = Punkt.</p>
-        <button class="btn" id="start-btn">Los geht's</button>
-      </div>
+  <div class="game-hud"><span id="score-display">🐸 0</span><span id="highscore-display">Rekord: 0</span></div>
+  <div class="game-shell">
+    <canvas id="gameCanvas" width="380" height="680"></canvas>
+    <div class="game-overlay" id="overlay">
+      <h2>Bereit?</h2>
+      <p>Finger uf de Canvas leg und uf/ab zieh.</p>
+      <button class="btn" id="start-btn">Los geht's</button>
     </div>
   </div>
 </div>
@@ -59,9 +60,11 @@ highscoreDisplay.textContent = 'Rekord: ' + highscore;
 
 const fabiImg = new Image();
 fabiImg.src = 'images/fabi-sticker.png';
+let fabiRatio = 1;
+fabiImg.onload = () => { fabiRatio = fabiImg.naturalWidth / fabiImg.naturalHeight; };
 
-let state = 'idle'; // idle, playing, over, win
-let player = { x: 60, y: H/2, targetY: H/2, r: 26 };
+let state = 'idle'; // idle, playing, swarming, over, win
+let player = { x: 66, y: H/2, targetY: H/2, r: 30 };
 let roaches = [];
 let frogs = [];
 let score = 0;
@@ -70,23 +73,18 @@ let lastRoachSpawn = 0;
 let lastFrogSpawn = 0;
 let animId = null;
 let lastTime = 0;
+let swarm = [];
 
 function reset(){
   player.y = H/2; player.targetY = H/2;
-  roaches = []; frogs = [];
+  roaches = []; frogs = []; swarm = [];
   score = 0; elapsed = 0; lastRoachSpawn = 0; lastFrogSpawn = 0;
   scoreDisplay.textContent = '🐸 0';
 }
 
-function currentSpeed(){
-  return Math.min(2.6 + elapsed*0.045, 6.5);
-}
-function roachSpawnInterval(){
-  return Math.max(1100 - elapsed*22, 480);
-}
-function frogSpawnInterval(){
-  return Math.max(1800 - elapsed*15, 1100);
-}
+function currentSpeed(){ return Math.min(2.6 + elapsed*0.045, 6.5); }
+function roachSpawnInterval(){ return Math.max(1100 - elapsed*22, 480); }
+function frogSpawnInterval(){ return Math.max(1800 - elapsed*15, 1100); }
 
 function spawnRoach(){
   const r = 20;
@@ -94,7 +92,7 @@ function spawnRoach(){
   roaches.push({x: W+r, y, r});
 }
 function spawnFrog(){
-  const r = 17;
+  const r = 18;
   const y = r + Math.random()*(H - 2*r);
   frogs.push({x: W+r, y, r});
 }
@@ -102,8 +100,6 @@ function spawnFrog(){
 function update(dt){
   elapsed += dt/1000;
   const speed = currentSpeed();
-
-  // smooth follow
   player.y += (player.targetY - player.y) * Math.min(1, dt/90);
   player.y = Math.max(player.r, Math.min(H-player.r, player.y));
 
@@ -117,22 +113,31 @@ function update(dt){
   roaches = roaches.filter(o => o.x > -30);
   frogs = frogs.filter(o => o.x > -30);
 
-  // collisions: roach = game over
   for(const o of roaches){
     const dx = o.x-player.x, dy = o.y-player.y;
-    if(Math.sqrt(dx*dx+dy*dy) < o.r+player.r-8){ endGame(false); return; }
+    if(Math.sqrt(dx*dx+dy*dy) < o.r+player.r-10){ startSwarm(false); return; }
   }
-  // collisions: frog = point
   frogs = frogs.filter(o => {
     const dx = o.x-player.x, dy = o.y-player.y;
     if(Math.sqrt(dx*dx+dy*dy) < o.r+player.r){
       score++;
       scoreDisplay.textContent = '🐸 ' + score;
-      if(score >= CAP){ endGame(true); }
+      if(score >= CAP){ startSwarm(true); }
       return false;
     }
     return true;
   });
+}
+
+function drawPlayer(){
+  const h = player.r*2.6;
+  const w = h*fabiRatio;
+  if(fabiImg.complete && fabiImg.naturalWidth){
+    ctx.drawImage(fabiImg, player.x-w/2, player.y-h/2, w, h);
+  } else {
+    ctx.font = '40px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🐸', player.x, player.y);
+  }
 }
 
 function draw(){
@@ -141,27 +146,13 @@ function draw(){
   grad.addColorStop(0,'#EAF7EC'); grad.addColorStop(1,'#D3EEDD');
   ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
 
-  ctx.font = '34px serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = '36px serif';
   roaches.forEach(o => ctx.fillText('🪳', o.x, o.y));
-  ctx.font = '30px serif';
+  ctx.font = '32px serif';
   frogs.forEach(o => ctx.fillText('🐸', o.x, o.y));
 
-  // player
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(player.x, player.y, player.r, 0, Math.PI*2);
-  ctx.closePath();
-  ctx.fillStyle = '#fff';
-  ctx.fill();
-  ctx.clip();
-  if(fabiImg.complete && fabiImg.naturalWidth){
-    const size = player.r*2.3;
-    ctx.drawImage(fabiImg, player.x-size/2, player.y-size/2+4, size, size);
-  }
-  ctx.restore();
-  ctx.lineWidth = 3; ctx.strokeStyle = '#6FCF97';
-  ctx.beginPath(); ctx.arc(player.x, player.y, player.r, 0, Math.PI*2); ctx.stroke();
+  drawPlayer();
 }
 
 function loop(t){
@@ -180,17 +171,48 @@ function startGame(){
   animId = requestAnimationFrame(loop);
 }
 
+function startSwarm(won){
+  cancelAnimationFrame(animId);
+  state = 'swarming';
+  swarm = [];
+  const swarmStart = performance.now();
+  function swarmStep(t){
+    const p = Math.min((t-swarmStart)/700, 1);
+    if(swarm.length < 45 && Math.random() < 0.9){
+      swarm.push({
+        x: Math.random()*W, y: Math.random()*H,
+        size: 20 + Math.random()*26, rot: Math.random()*Math.PI*2
+      });
+    }
+    ctx.clearRect(0,0,W,H);
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'#EAF7EC'); grad.addColorStop(1,'#D3EEDD');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+    if(!won) drawPlayer();
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    swarm.forEach(s => {
+      ctx.save();
+      ctx.translate(s.x, s.y); ctx.rotate(s.rot);
+      ctx.font = s.size+'px serif';
+      ctx.fillText(won ? '🐸' : '🪳', 0, 0);
+      ctx.restore();
+    });
+    if(p < 1){ requestAnimationFrame(swarmStep); }
+    else { endGame(won); }
+  }
+  requestAnimationFrame(swarmStep);
+}
+
 function endGame(won){
   state = won ? 'win' : 'over';
-  cancelAnimationFrame(animId);
   if(score > highscore){
     highscore = score;
     localStorage.setItem('frosch-game-highscore', highscore);
     highscoreDisplay.textContent = 'Rekord: ' + highscore;
   }
   overlay.innerHTML = won
-    ? `<h2>🥃 30 Frösch!</h2><p>Fabi schuldet dir jetzt en Shot. Verdient!</p><button class="btn" id="restart-btn">Nomol spile</button>`
-    : `<h2>Game Over</h2><p>${score} Frösch gsammlet. ${score>=highscore?'Neue Rekord! 🎉':'Vesuechs nomol!'}</p><button class="btn" id="restart-btn">Nomol spile</button>`;
+    ? `<h2>🥃 30 Frösch!!</h2><p>Jetzt sofort d Fabi go sueche und en Shot mit ihre trinke — verdient!</p><button class="btn" id="restart-btn">Nomol spile</button>`
+    : `<h2>Ufgfresse 🪳</h2><p>${score} Frösch gsammlet. ${score>=highscore && score>0 ?'Neue Rekord! 🎉':'Versuechs nomol!'}</p><button class="btn" id="restart-btn">Nomol spile</button>`;
   overlay.style.display = 'flex';
   document.getElementById('restart-btn').onclick = startGame;
 }
@@ -203,6 +225,8 @@ function setTargetFromEvent(clientY){
   player.targetY = (clientY - rect.top) * scale;
 }
 canvas.addEventListener('pointermove', e => { if(state==='playing') setTargetFromEvent(e.clientY); });
+canvas.addEventListener('pointerdown', e => { if(state==='playing') setTargetFromEvent(e.clientY); });
+canvas.addEventListener('touchstart', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientY); e.preventDefault(); } }, {passive:false});
 canvas.addEventListener('touchmove', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientY); e.preventDefault(); } }, {passive:false});
 document.addEventListener('keydown', e => {
   if(state!=='playing') return;

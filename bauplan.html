@@ -3,18 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>De Bauplan vo de Fabi</title>
+<title>Zabka Action Figure</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.blueprint-hero{background:#123024; border-radius:22px; padding:28px 16px 14px; margin-bottom:16px; text-align:center;}
-.blueprint-hero img{max-height:280px; width:auto; margin:0 auto; display:block; filter:drop-shadow(0 10px 20px rgba(0,0,0,0.35));}
-.blueprint-hero .modeltxt{color:#FFD37A; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; margin-top:14px; letter-spacing:0.5px;}
-.spec-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-@media (max-width:400px){ .spec-grid{grid-template-columns:1fr;} }
-.spec-card{background:var(--card); border:2px solid #E3F5E9; border-radius:16px; padding:14px 16px;}
-.spec-card .spec-icon{font-size:26px; margin-bottom:4px; display:block;}
-.spec-card h3{margin-bottom:2px; font-size:15px;}
-.spec-card p{margin:0; font-size:12.5px;}
+.blister{
+  background:linear-gradient(180deg,#FFD37A,#FF9FC0); border-radius:24px; padding:4px;
+  box-shadow:0 14px 34px rgba(47,143,91,0.25);
+}
+.blister-inner{background:#123024; border-radius:20px; padding:18px 14px 20px;}
+.blister-title{text-align:center; font-family:'Baloo 2',sans-serif; color:#FFD37A; font-weight:800; font-size:22px; margin:2px 0 0;}
+.blister-sub{text-align:center; color:#EAF7EC; font-size:12px; font-weight:700; letter-spacing:1px; margin-bottom:14px;}
+.window{
+  background:radial-gradient(circle at 50% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%), #0c2018;
+  border:3px dashed #6FCF97; border-radius:16px; padding:16px; text-align:center;
+}
+.window img{max-height:230px; width:auto; filter:drop-shadow(0 8px 14px rgba(0,0,0,0.5));}
+.feature-list{list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:8px;}
+.feature-list li{color:#EAF7EC; font-size:13px; display:flex; gap:8px; align-items:flex-start;}
+.feature-list li::before{content:'✔'; color:#6FCF97; font-weight:800; flex-shrink:0;}
+.barcode{display:flex; gap:2px; align-items:flex-end; justify-content:center; margin-top:16px; height:28px;}
+.barcode span{background:#EAF7EC; width:3px; display:block;}
+.barcode-label{text-align:center; color:#9BB5A6; font-size:10px; letter-spacing:2px; margin-top:4px;}
 </style>
 </head>
 <body>
@@ -24,30 +33,38 @@
 </header>
 <div class="wrap">
   <div class="card">
-    <div class="tag">Technischi Doku</div>
-    <h1>De Bauplan vo de Fabi</h1>
-    <p>Wie bim Tom Turbo — nume dass da Räder de Sonderfunktione sind.</p>
+    <div class="tag">Sammlerstück</div>
+    <h1>Zabka Action Figure</h1>
+    <p>Limitierti Edition. Nur 1x produziert, nöd nachbestellbar.</p>
   </div>
 
-  <div class="blueprint-hero">
-    <img src="images/fabi-silhouette.png" alt="Silhouette Fabi">
-    <div class="modeltxt">MODELL ZABKA-11.11 · SERIE WINTERTHUR/ZÜRI</div>
-  </div>
-
-  <div class="spec-grid">
-    <div class="spec-card"><span class="spec-icon">🚑</span><h3>ICU-Turbo-Modus</h3><p>Bliibt ruehig, wenn's brennt</p></div>
-    <div class="spec-card"><span class="spec-icon">💬</span><h3>Schlagfertigkeits-Sensor</h3><p>Kontert schneller als du tippsch</p></div>
-    <div class="spec-card"><span class="spec-icon">🪳</span><h3>Kakerlaken-Alarm</h3><p>Löst sofort us, Fluchtreflex inklusive</p></div>
-    <div class="spec-card"><span class="spec-icon">🧼</span><h3>Ornig-Radar</h3><p>Erkennt Chaos uf 20 Meter</p></div>
-    <div class="spec-card"><span class="spec-icon">🐸</span><h3>Frosch-Loyalität</h3><p>Einmal Zabka, immer Zabka</p></div>
-    <div class="spec-card"><span class="spec-icon">🍫</span><h3>Süessigkeits-Speicher</h3><p>Chli, aber täglich in Betrieb</p></div>
-    <div class="spec-card"><span class="spec-icon">🧳</span><h3>Planungs-Prozessor</h3><p>Koffer parat, 3 Wuche vorher</p></div>
-    <div class="spec-card"><span class="spec-icon">🥾</span><h3>Wander-Motor</h3><p>Läuft au no bi 2000 Höhemeter</p></div>
-    <div class="spec-card"><span class="spec-icon">🌙</span><h3>Nacht-Modus</h3><p>Vo Buech bis Techno-Floor</p></div>
+  <div class="blister">
+    <div class="blister-inner">
+      <div class="blister-title">ZABKA · MODELL 11.11</div>
+      <div class="blister-sub">SPECIAL EDITION · WINTERTHUR/ZÜRI SERIE</div>
+      <div class="window">
+        <img src="images/fabi-silhouette.png" alt="Zabka Silhouette">
+      </div>
+      <ul class="feature-list">
+        <li>ICU-Turbo-Modus: bliibt ruehig, wenn's brennt</li>
+        <li>Schlagfertigkeits-Sensor: kontert schneller als du tippsch</li>
+        <li>Kakerlaken-Alarm: löst sofort us, Fluchtreflex inklusive</li>
+        <li>Ornig-Radar: erkennt Chaos uf 20 Meter</li>
+        <li>Frosch-Loyalität: einmal Zabka, immer Zabka</li>
+        <li>Süessigkeits-Speicher: chli, aber täglich in Betrieb</li>
+        <li>Planungs-Prozessor: Koffer parat, 3 Wuche vorher</li>
+        <li>Wander-Motor: läuft au bi 2000 Höhemeter</li>
+        <li>Nacht-Modus: vo Buech bis Techno-Floor</li>
+      </ul>
+      <div class="barcode">
+        <span style="height:100%"></span><span style="height:60%"></span><span style="height:90%"></span><span style="height:40%"></span><span style="height:100%"></span><span style="height:70%"></span><span style="height:50%"></span><span style="height:100%"></span><span style="height:80%"></span><span style="height:60%"></span><span style="height:100%"></span><span style="height:45%"></span>
+      </div>
+      <div class="barcode-label">NICHT FÜR KAKERLAKE GEEIGNET</div>
+    </div>
   </div>
 
   <div class="card" style="margin-top:16px">
-    <p style="margin:0">Kurz gseit: es hochkomplexs System us Härz, Humor und Hygiene-Wahn — und geng verlässlich unterwegs.</p>
+    <p style="margin:0">Batterie hebt e ganzi Nacht Techno duus. Garantie: solang mir zäme si. 💚</p>
   </div>
 </div>
 </body>
