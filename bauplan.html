@@ -21,28 +21,27 @@
 .fabi-head{position:absolute; left:50%; top:22.5%; width:13.5%; aspect-ratio:1/1; transform:translate(-50%,-50%) rotate(-2deg); border-radius:50%; overflow:hidden; border:3px solid #7a6a3f; box-shadow:0 4px 10px rgba(0,0,0,0.35); z-index:3;}
 .fabi-head img{width:100%; height:100%; object-fit:cover;}
 .censor{
-  position:absolute; transform:translate(-50%,-50%); font-size:6vw;
-  filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4)); user-select:none; cursor:pointer;
-  transition:transform .35s ease, opacity .35s ease; z-index:2;
+  position:absolute; transform:translate(-50%,-50%); font-size:7vw;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4)); user-select:none; z-index:2; pointer-events:none;
 }
-.censor.hop{transform:translate(-50%,-160%) scale(0.85); opacity:0.15;}
-.censor.groin{left:50%; top:51.5%; font-size:5.2vw;}
-.censor.chestL{left:46.3%; top:33%; font-size:3.6vw;}
-.censor.chestR{left:53.7%; top:33%; font-size:3.6vw;}
-.marker{
-  position:absolute; transform:translate(-50%,-50%); width:24px; height:24px; border-radius:50%;
-  background:#123024; color:#FFD37A; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px;
-  display:flex; align-items:center; justify-content:center; border:2px solid #FFD37A; z-index:4;
-  box-shadow:0 2px 6px rgba(0,0,0,0.4);
+.censor.groin{left:50%; top:52%;}
+.censor.chestL{left:45.8%; top:32.5%; font-size:4.4vw;}
+.censor.chestR{left:54.2%; top:32.5%; font-size:4.4vw;}
+.hotspot{
+  position:absolute; transform:translate(-50%,-50%); width:30px; height:30px; border-radius:50%;
+  background:rgba(111,207,151,0.35); border:2px solid rgba(111,207,151,0.9); cursor:pointer;
+  z-index:4; animation:pulse-dot 1.8s infinite;
 }
+.hotspot:hover, .hotspot.active{background:rgba(255,211,122,0.55); border-color:#FFD37A;}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(111,207,151,0.5);} 50%{box-shadow:0 0 0 8px rgba(111,207,151,0);}}
 .vitruv-caption{text-align:center; color:#5c4a26; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:12px; margin-top:10px; letter-spacing:1px;}
-.legend{margin-top:14px; border-top:2px dashed #c9b98a; padding-top:12px; display:flex; flex-direction:column; gap:8px;}
-.legend-item{display:flex; gap:10px; align-items:flex-start; font-size:12.5px; color:#3c2f14; line-height:1.4;}
-.legend-item .num{
-  flex-shrink:0; width:22px; height:22px; border-radius:50%; background:#123024; color:#FFD37A;
-  font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center;
+.info-panel{
+  margin-top:14px; border-top:2px dashed #c9b98a; padding-top:12px; min-height:60px;
+  display:flex; align-items:center; gap:12px;
 }
-.legend-item b{color:#5c4a26;}
+.info-panel .ico{font-size:30px; flex-shrink:0;}
+.info-panel .txt b{display:block; color:#3c2f14; font-family:'Baloo 2',sans-serif; font-size:14px;}
+.info-panel .txt span{color:#5c4a26; font-size:12.5px;}
 </style>
 </head>
 <body>
@@ -54,43 +53,59 @@
   <div class="card">
     <div class="tag">Technischi Doku</div>
     <h1>De Vitruvianisch Fabi</h1>
-    <p>Ideale Proportione, Bauteil für Bauteil dokumentiert. Tipp uf en Frosch für e frechi Überraschig 🐸</p>
+    <p>Tipp uf en grüen Punkt am Körper für Detail-Infos zum Bauteil. Tipp uf en Frosch für e frechi Überraschig 🐸</p>
   </div>
 
   <div class="vitruv-frame">
     <div class="vitruv-inner">
       <img class="art" src="https://upload.wikimedia.org/wikipedia/commons/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg" alt="Vitruvianischer Mensch" onerror="this.parentElement.style.background='#e9dfc7'">
       <div class="fabi-head"><img src="images/fabi-sticker.png" alt="Fabi"></div>
-      <div class="censor groin" onclick="hop(this)">🐸</div>
-      <div class="censor chestL" onclick="hop(this)">🐸</div>
-      <div class="censor chestR" onclick="hop(this)">🐸</div>
+      <div class="censor groin" onclick="hop(event,this)" style="pointer-events:auto; cursor:pointer;">🐸</div>
+      <div class="censor chestL" onclick="hop(event,this)" style="pointer-events:auto; cursor:pointer;">🐸</div>
+      <div class="censor chestR" onclick="hop(event,this)" style="pointer-events:auto; cursor:pointer;">🐸</div>
 
-      <div class="marker" style="left:50%; top:22.5%;">1</div>
-      <div class="marker" style="left:50%; top:38%;">2</div>
-      <div class="marker" style="left:50%; top:47%;">3</div>
-      <div class="marker" style="left:16%; top:31%;">4</div>
-      <div class="marker" style="left:84%; top:31%;">4</div>
-      <div class="marker" style="left:38%; top:70%;">5</div>
-      <div class="marker" style="left:62%; top:70%;">5</div>
-      <div class="marker" style="left:35%; top:80%;">6</div>
+      <div class="hotspot" style="left:50%; top:20%;" data-i="0"></div>
+      <div class="hotspot" style="left:50%; top:38%;" data-i="1"></div>
+      <div class="hotspot" style="left:50%; top:47%;" data-i="2"></div>
+      <div class="hotspot" style="left:15%; top:31%;" data-i="3"></div>
+      <div class="hotspot" style="left:85%; top:31%;" data-i="3"></div>
+      <div class="hotspot" style="left:37%; top:70%;" data-i="4"></div>
+      <div class="hotspot" style="left:63%; top:70%;" data-i="4"></div>
+      <div class="hotspot" style="left:34%; top:81%;" data-i="5"></div>
     </div>
     <div class="vitruv-caption">MODELL ZABKA · PROPORZIONE 1:1 (RICS) · SERIE WINTERTHUR/ZÜRI</div>
 
-    <div class="legend">
-      <div class="legend-item"><span class="num">1</span><span><b>Kopf</b> — Schlagfertigkeits-Sensor & Nacht-Modus (vo Buech bis Techno-Floor)</span></div>
-      <div class="legend-item"><span class="num">2</span><span><b>Härz</b> — Frosch-Loyalität, einmal Zabka, immer Zabka</span></div>
-      <div class="legend-item"><span class="num">3</span><span><b>Buuch</b> — ICU-Turbo-Modus & Kakerlaken-Alarm (Bauchgfühl inklusive)</span></div>
-      <div class="legend-item"><span class="num">4</span><span><b>Arm/Hand</b> — Ornig-Radar (erkennt Chaos uf 20 Meter) & Süessigkeits-Griff</span></div>
-      <div class="legend-item"><span class="num">5</span><span><b>Bei</b> — Wander-Motor, läuft au bi 2000 Höhemeter</span></div>
-      <div class="legend-item"><span class="num">6</span><span><b>Fuess</b> — Planungs-Prozessor, Koffer parat 3 Wuche vorher</span></div>
+    <div class="info-panel" id="info-panel">
+      <span class="ico">👆</span>
+      <div class="txt"><b>Tipp uf de Körper</b><span>Wähl es Bauteil für meh Infos</span></div>
     </div>
   </div>
 </div>
 
 <script>
-function hop(el){
-  el.classList.add('hop');
-  setTimeout(()=>el.classList.remove('hop'), 1400);
+const TRAITS = [
+  {ico:'💬', title:'Kopf', text:'Schlagfertigkeits-Sensor & Nacht-Modus, vo Buech bis Techno-Floor'},
+  {ico:'🐸', title:'Härz', text:'Frosch-Loyalität — einmal Zabka, immer Zabka'},
+  {ico:'🚑', title:'Buuch', text:'ICU-Turbo-Modus & Kakerlaken-Alarm, Bauchgfühl inklusive'},
+  {ico:'🧼', title:'Arm/Hand', text:'Ornig-Radar (erkennt Chaos uf 20 Meter) & Süessigkeits-Griff'},
+  {ico:'🥾', title:'Bei', text:'Wander-Motor — läuft au bi 2000 Höhemeter'},
+  {ico:'🧳', title:'Fuess', text:'Planungs-Prozessor — Koffer parat 3 Wuche vorher'}
+];
+document.querySelectorAll('.hotspot').forEach(h=>{
+  h.onclick = () => {
+    document.querySelectorAll('.hotspot').forEach(x=>x.classList.remove('active'));
+    h.classList.add('active');
+    const t = TRAITS[h.dataset.i];
+    document.getElementById('info-panel').innerHTML =
+      `<span class="ico">${t.ico}</span><div class="txt"><b>${t.title}</b><span>${t.text}</span></div>`;
+  };
+});
+function hop(e, el){
+  e.stopPropagation();
+  el.style.transition = 'transform .3s ease, opacity .3s ease';
+  el.style.transform = 'translate(-50%,-160%) scale(0.85)';
+  el.style.opacity = '0.15';
+  setTimeout(()=>{ el.style.transform='translate(-50%,-50%)'; el.style.opacity='1'; }, 1400);
 }
 </script>
 </body>

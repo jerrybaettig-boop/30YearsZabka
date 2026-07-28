@@ -122,6 +122,12 @@ header.top a{font-size:13px; color:var(--leaf-d); text-decoration:none; font-wei
 }
 .stickynav .brand{display:flex; align-items:center; gap:8px; text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:800; color:var(--leaf-d); font-size:16px;}
 .stickynav .back{font-size:13px; font-weight:700; color:var(--pink-d); text-decoration:none; padding:8px 14px; border-radius:99px; background:#FFF0F6;}
+.stickynav .help-btn{
+  font-size:13px; font-weight:800; color:#fff; text-decoration:none; padding:8px 16px;
+  border-radius:99px; background:linear-gradient(90deg,#e74c3c,#c0392b);
+  box-shadow:0 4px 10px rgba(231,76,60,0.4); animation:pulse-help 2s infinite;
+}
+@keyframes pulse-help{0%,100%{transform:scale(1);} 50%{transform:scale(1.06);}}
 
 /* Foto-Badge (rundes Sticker-Foto) */
 .photo-badge{
