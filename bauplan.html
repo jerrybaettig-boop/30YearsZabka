@@ -23,12 +23,20 @@
 .censor.groin{left:50%; top:51%;}
 .censor.chestL{left:45.5%; top:31%; font-size:4.8vw;}
 .censor.chestR{left:54.5%; top:31%; font-size:4.8vw;}
+.marker{
+  position:absolute; transform:translate(-50%,-50%); width:24px; height:24px; border-radius:50%;
+  background:#123024; color:#FFD37A; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:12px;
+  display:flex; align-items:center; justify-content:center; border:2px solid #FFD37A; z-index:4;
+  box-shadow:0 2px 6px rgba(0,0,0,0.4);
+}
 .vitruv-caption{text-align:center; color:#5c4a26; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:12px; margin-top:10px; letter-spacing:1px;}
-.blueprint-labels{position:relative; margin-top:14px; border-top:2px dashed #c9b98a; padding-top:12px;}
-.blueprint-labels .row{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; font-family:'Baloo 2',sans-serif;}
-.blueprint-labels .col{flex:1;}
-.blueprint-item{margin-bottom:8px; font-size:11.5px; color:#5c4a26; line-height:1.35;}
-.blueprint-item b{display:block; font-size:12.5px; color:#3c2f14;}
+.legend{margin-top:14px; border-top:2px dashed #c9b98a; padding-top:12px; display:flex; flex-direction:column; gap:8px;}
+.legend-item{display:flex; gap:10px; align-items:flex-start; font-size:12.5px; color:#3c2f14; line-height:1.4;}
+.legend-item .num{
+  flex-shrink:0; width:22px; height:22px; border-radius:50%; background:#123024; color:#FFD37A;
+  font-family:'Baloo 2',sans-serif; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center;
+}
+.legend-item b{color:#5c4a26;}
 </style>
 </head>
 <body>
@@ -40,7 +48,7 @@
   <div class="card">
     <div class="tag">Technischi Doku</div>
     <h1>De Vitruvianisch Fabi</h1>
-    <p>Ideale Proportione, wüsseschaftlich dokumentiert (ungefähr). Tipp uf en Frosch für e frechi Überraschig 🐸</p>
+    <p>Ideale Proportione, Bauteil für Bauteil dokumentiert. Tipp uf en Frosch für e frechi Überraschig 🐸</p>
   </div>
 
   <div class="vitruv-frame">
@@ -50,25 +58,25 @@
       <div class="censor groin" onclick="hop(this)">🐸</div>
       <div class="censor chestL" onclick="hop(this)">🐸</div>
       <div class="censor chestR" onclick="hop(this)">🐸</div>
-    </div>
 
-    <div class="blueprint-labels">
-      <div class="row">
-        <div class="col">
-          <div class="blueprint-item"><b>🚑 ICU-Turbo-Modus</b>Bliibt ruehig, wenn's brennt</div>
-          <div class="blueprint-item"><b>💬 Schlagfertigkeits-Sensor</b>Kontert schneller als du tippsch</div>
-          <div class="blueprint-item"><b>🪳 Kakerlaken-Alarm</b>Fluchtreflex inklusive</div>
-          <div class="blueprint-item"><b>🧼 Ornig-Radar</b>Erkennt Chaos uf 20 Meter</div>
-          <div class="blueprint-item"><b>🍫 Süessigkeits-Speicher</b>Chli, aber täglich in Betrieb</div>
-        </div>
-        <div class="col">
-          <div class="blueprint-item"><b>🐸 Frosch-Loyalität</b>Einmal Zabka, immer Zabka</div>
-          <div class="blueprint-item"><b>🧳 Planungs-Prozessor</b>Koffer parat, 3 Wuche vorher</div>
-          <div class="blueprint-item"><b>🥾 Wander-Motor</b>Läuft au bi 2000 Höhemeter</div>
-          <div class="blueprint-item"><b>🌙 Nacht-Modus</b>Vo Buech bis Techno-Floor</div>
-          <div class="blueprint-item"><b>⚙️ Modell</b>ZABKA · 1:1 (RICS) · Serie Winterthur/Züri</div>
-        </div>
-      </div>
+      <div class="marker" style="left:50%; top:22.5%;">1</div>
+      <div class="marker" style="left:50%; top:38%;">2</div>
+      <div class="marker" style="left:50%; top:47%;">3</div>
+      <div class="marker" style="left:16%; top:31%;">4</div>
+      <div class="marker" style="left:84%; top:31%;">4</div>
+      <div class="marker" style="left:38%; top:70%;">5</div>
+      <div class="marker" style="left:62%; top:70%;">5</div>
+      <div class="marker" style="left:35%; top:80%;">6</div>
+    </div>
+    <div class="vitruv-caption">MODELL ZABKA · PROPORZIONE 1:1 (RICS) · SERIE WINTERTHUR/ZÜRI</div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="num">1</span><span><b>Kopf</b> — Schlagfertigkeits-Sensor & Nacht-Modus (vo Buech bis Techno-Floor)</span></div>
+      <div class="legend-item"><span class="num">2</span><span><b>Härz</b> — Frosch-Loyalität, einmal Zabka, immer Zabka</span></div>
+      <div class="legend-item"><span class="num">3</span><span><b>Buuch</b> — ICU-Turbo-Modus & Kakerlaken-Alarm (Bauchgfühl inklusive)</span></div>
+      <div class="legend-item"><span class="num">4</span><span><b>Arm/Hand</b> — Ornig-Radar (erkennt Chaos uf 20 Meter) & Süessigkeits-Griff</span></div>
+      <div class="legend-item"><span class="num">5</span><span><b>Bei</b> — Wander-Motor, läuft au bi 2000 Höhemeter</span></div>
+      <div class="legend-item"><span class="num">6</span><span><b>Fuess</b> — Planungs-Prozessor, Koffer parat 3 Wuche vorher</span></div>
     </div>
   </div>
 </div>

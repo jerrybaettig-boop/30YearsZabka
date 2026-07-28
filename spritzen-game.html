@@ -92,6 +92,7 @@ const BOSS_NAMES = [
   "Hepatitis-Hugo","Legionella-Luigi","MRSA-Marcel","Cholera 2.0","Ebola-Erwin",
   "Syphilis-Sissi","Pest-Pedro","Grippe Deluxe","Superkeim-Suse","DR. PANDEMIE-PIT"
 ];
+const BOSS_EMOJIS = ['🦠','👾','🐙','🦑','🐍','🕷️','👹','🦂','🐲','🧫'];
 let highscore = parseInt(localStorage.getItem('spritze-game-highscore') || '0');
 
 let state = 'idle';
@@ -103,7 +104,9 @@ let score = 0;
 let lives = 3;
 let level = 1;
 let killsThisLevel = 0;
-let bossActive = null; // {x,y,r,hp,maxHp,name,vx}
+let bossActive = null; // {x,y,r,hp,maxHp,name,emoji,vx,dir,lastAttack,attackInterval}
+let bossProjectiles = [];
+let playerInvuln = 0;
 let elapsed = 0;
 let lastGermSpawn = 0;
 let lastShot = 0;
@@ -116,6 +119,7 @@ function reset(){
   player.x = W/2; player.targetX = W/2;
   germs = []; bullets = []; particles = [];
   score = 0; lives = 3; level = 1; killsThisLevel = 0; bossActive = null;
+  bossProjectiles = []; playerInvuln = 0;
   elapsed = 0; lastGermSpawn = 0; gameClock = 0;
   perks = { laser:0, double:0, impfig:0, zitlupe:0 };
   scoreDisplay.textContent = '💉 0';
@@ -155,8 +159,9 @@ function randomPerk(){
 
 function spawnBoss(){
   const name = BOSS_NAMES[Math.min(level-1, BOSS_NAMES.length-1)];
+  const emoji = BOSS_EMOJIS[(level-1) % BOSS_EMOJIS.length];
   const hp = 4 + Math.floor(level*0.8);
-  bossActive = {x: W/2, y: 90, r: 42, hp, maxHp: hp, name, vx: 1.6 + level*0.05, dir:1};
+  bossActive = {x: W/2, y: 90, r: 42, hp, maxHp: hp, name, emoji, vx: 1.6 + level*0.05, dir:1, lastAttack:0, attackInterval: Math.max(1400 - level*30, 550)};
   bossBarWrap.style.display = 'block';
   bossBar.style.width = '100%';
   showToast('⚠️ Endboss: ' + name + '!', 2200);
@@ -203,7 +208,30 @@ function update(dt){
     bossActive.x += bossActive.vx*bossActive.dir*(dt/16.7);
     if(bossActive.x < bossActive.r+10 || bossActive.x > W-bossActive.r-10) bossActive.dir *= -1;
     bossActive.y = 90 + Math.sin(gameClock/500)*10;
+
+    bossActive.lastAttack += dt;
+    if(bossActive.lastAttack > bossActive.attackInterval){
+      bossActive.lastAttack = 0;
+      const dx = player.x - bossActive.x, dy = player.y - bossActive.y;
+      const dist = Math.sqrt(dx*dx+dy*dy) || 1;
+      const spd = 3.4 + level*0.06;
+      bossProjectiles.push({x: bossActive.x, y: bossActive.y, vx: dx/dist*spd, vy: dy/dist*spd, r:12});
+    }
   }
+  bossProjectiles.forEach(p => { p.x += p.vx*(dt/16.7); p.y += p.vy*(dt/16.7); });
+  bossProjectiles = bossProjectiles.filter(p => p.y < H+30 && p.y > -30 && p.x > -30 && p.x < W+30);
+  if(playerInvuln > 0) playerInvuln -= dt;
+  for(const p of bossProjectiles){
+    const dx=p.x-player.x, dy=p.y-player.y;
+    if(Math.sqrt(dx*dx+dy*dy) < p.r+player.r-8 && playerInvuln <= 0 && gameClock >= perks.impfig){
+      p.dead = true;
+      lives--;
+      playerInvuln = 900;
+      livesDisplay.textContent = '❤️'.repeat(Math.max(lives,0)) + '🖤'.repeat(3-Math.max(lives,0));
+      if(lives <= 0){ endGame(false); return; }
+    }
+  }
+  bossProjectiles = bossProjectiles.filter(p => !p.dead);
 
   // bullets vs germs
   for(const b of bullets){
@@ -232,6 +260,7 @@ function update(dt){
           score += 5;
           scoreDisplay.textContent = '💉 ' + score;
           bossActive = null;
+          bossProjectiles = [];
           bossBarWrap.style.display = 'none';
           if(level >= MAX_LEVEL){ endGame(true); return; }
           level++;
@@ -280,12 +309,14 @@ function draw(){
   });
 
   if(bossActive){
-    ctx.font = '64px serif';
-    ctx.fillText('🧟', bossActive.x, bossActive.y);
-    ctx.font = 'bold 12px Baloo 2, sans-serif';
+    ctx.font = '58px serif';
+    ctx.fillText(bossActive.emoji, bossActive.x, bossActive.y);
+    ctx.font = '600 10px Baloo 2, sans-serif';
     ctx.fillStyle = '#c62828';
-    ctx.fillText(bossActive.name, bossActive.x, bossActive.y - 55);
+    ctx.fillText(bossActive.name, bossActive.x, bossActive.y - 50);
   }
+  ctx.font = '22px serif';
+  bossProjectiles.forEach(p => ctx.fillText('🦠', p.x, p.y));
 
   particles.forEach(p => {
     ctx.font = (16*(p.life/250))+'px serif';

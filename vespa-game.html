@@ -3,24 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Zabka-Vespa-Sprint</title>
+<title>Zabka uf de Vespa hei</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
 body{overscroll-behavior:none;}
 .game-page-wrap{max-width:480px; margin:0 auto; padding:16px;}
-#gameCanvas{width:100%; height:auto; display:block; border-radius:20px; touch-action:none; background:#555;}
+#gameCanvas{width:100%; height:auto; display:block; border-radius:20px; touch-action:none;}
 .game-shell{position:relative; border-radius:20px; overflow:hidden; box-shadow:0 12px 34px rgba(47,143,91,0.2); border:2px solid #E3F5E9;}
 .game-overlay{
   position:absolute; inset:0; background:rgba(18,48,36,0.85); color:#fff;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   text-align:center; padding:20px; gap:10px; z-index:5;
 }
-.game-overlay h2{font-family:'Baloo 2',sans-serif; font-size:24px; margin:0; color:#FFD37A;}
-.game-overlay p{color:#EAF7EC; margin:0; font-size:14px;}
-.game-hud{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--leaf-d); font-size:15px;}
-.title-compact{margin-bottom:10px;}
-.title-compact h1{margin-bottom:2px; font-size:22px;}
-.title-compact p{margin:0; font-size:13px;}
+.game-overlay h2{font-family:'Baloo 2',sans-serif; font-size:22px; margin:0; color:#FFD37A;}
+.game-overlay p{color:#EAF7EC; margin:0; font-size:13px;}
+.game-hud{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--leaf-d); font-size:14px;}
+.title-compact{margin-bottom:8px;}
+.title-compact h1{margin-bottom:2px; font-size:20px;}
+.title-compact p{margin:0; font-size:12.5px;}
+.progress-route{height:12px; background:#E3F5E9; border-radius:99px; overflow:hidden; margin-bottom:10px; position:relative;}
+.progress-route .fill{height:100%; background:linear-gradient(90deg,var(--leaf),var(--pink)); border-radius:99px; transition:width .2s;}
+.route-labels{display:flex; justify-content:space-between; font-size:10px; color:var(--ink-soft); margin-top:2px; margin-bottom:10px;}
+.controls-row{display:flex; justify-content:center; gap:10px; margin-top:12px;}
+.ctrl-btn{
+  width:64px; height:56px; border-radius:16px; border:2px solid #E3F5E9; background:#F7FCF8;
+  font-size:22px; display:flex; align-items:center; justify-content:center; user-select:none;
+}
+.ctrl-btn:active{background:#EEFBF1;}
 </style>
 </head>
 <body>
@@ -30,18 +39,26 @@ body{overscroll-behavior:none;}
 </header>
 <div class="game-page-wrap">
   <div class="title-compact">
-    <h1>🛵 Zabka-Vespa-Sprint</h1>
-    <p>Wich de rote Ample us, schnapp dir jedi grüni. Zieh mit Finger uf/ab.</p>
+    <h1>🛵 Zabka uf de Vespa hei</h1>
+    <p>Vo Züri, am See verbii, bis hei uf Schindellegi. Spring über Hindernis, wächsle d Spur, sammle Münz.</p>
   </div>
 
-  <div class="game-hud"><span id="score-display">🟢 0</span><span id="highscore-display">Rekord: 0</span></div>
+  <div class="progress-route"><div class="fill" id="route-fill" style="width:0%"></div></div>
+  <div class="route-labels"><span>🏙️ Züri</span><span>🌊 Zürisee</span><span>🏡 Schindellegi</span></div>
+
+  <div class="game-hud"><span id="score-display">🪙 0</span><span id="lives-display">❤️❤️❤️</span></div>
   <div class="game-shell">
-    <canvas id="gameCanvas" width="380" height="680"></canvas>
+    <canvas id="gameCanvas" width="380" height="560"></canvas>
     <div class="game-overlay" id="overlay">
-      <h2>Bereit?</h2>
-      <p>Rot = Bussgäld. Grün = Punkt. Zürich-Verkehr wartet uf niemert.</p>
-      <button class="btn" id="start-btn">Gas gäh</button>
+      <h2>Bereit für d Heifahrt?</h2>
+      <p>Pfeiltaste li/re zum Spur wächsle, uf/Space zum Springe. Uf em Handy: Knöpf drunder.</p>
+      <button class="btn" id="start-btn">Los geit's</button>
     </div>
+  </div>
+  <div class="controls-row">
+    <div class="ctrl-btn" id="btn-left">⬅️</div>
+    <div class="ctrl-btn" id="btn-jump">⬆️</div>
+    <div class="ctrl-btn" id="btn-right">➡️</div>
   </div>
 </div>
 
@@ -51,108 +68,170 @@ const ctx = canvas.getContext('2d');
 const W = canvas.width, H = canvas.height;
 const overlay = document.getElementById('overlay');
 const scoreDisplay = document.getElementById('score-display');
-const highscoreDisplay = document.getElementById('highscore-display');
+const livesDisplay = document.getElementById('lives-display');
+const routeFill = document.getElementById('route-fill');
 const startBtn = document.getElementById('start-btn');
 
-const CAP = 25;
-let highscore = parseInt(localStorage.getItem('vespa-game-highscore') || '0');
-highscoreDisplay.textContent = 'Rekord: ' + highscore;
+const TARGET_TIME = 75; // Sekunden bis Schindellegi
+const GROUND_Y = H - 90;
+const LANES = [GROUND_Y - 0, GROUND_Y - 0, GROUND_Y - 0]; // gleiche Bodenlinie, 3 x-Spuren
+const LANE_X = [W*0.28, W*0.5, W*0.72];
+
+let highscore = parseInt(localStorage.getItem('vespa-run-highscore') || '0');
 
 let state = 'idle';
-let player = { x: 66, y: H/2, targetY: H/2, r: 26 };
-let reds = [];
-let greens = [];
+let lane = 1;
+let player = { x: LANE_X[1], y: GROUND_Y, vy:0, onGround:true, w:40, h:46 };
+let obstacles = [];
+let coins = [];
 let score = 0;
+let lives = 3;
 let elapsed = 0;
-let lastRedSpawn = 0;
-let lastGreenSpawn = 0;
+let lastObSpawn = 0;
+let lastCoinSpawn = 0;
 let animId = null;
 let lastTime = 0;
-let swarm = [];
+let invuln = 0;
 
 function reset(){
-  player.y = H/2; player.targetY = H/2;
-  reds = []; greens = []; swarm = [];
-  score = 0; elapsed = 0; lastRedSpawn = 0; lastGreenSpawn = 0;
-  scoreDisplay.textContent = '🟢 0';
+  lane = 1; player.x = LANE_X[1]; player.y = GROUND_Y; player.vy = 0; player.onGround = true;
+  obstacles = []; coins = [];
+  score = 0; lives = 3; elapsed = 0; lastObSpawn = 0; lastCoinSpawn = 0; invuln = 0;
+  scoreDisplay.textContent = '🪙 0';
+  livesDisplay.textContent = '❤️❤️❤️';
+  routeFill.style.width = '0%';
 }
 
-function currentSpeed(){ return Math.min(3.2 + elapsed*0.075, 8.5); }
-function redSpawnInterval(){ return Math.max(950 - elapsed*28, 300); }
-function greenSpawnInterval(){ return Math.max(1900 - elapsed*12, 1000); }
+function speed(){ return Math.min(4 + elapsed*0.06, 9); }
+function obSpawnInterval(){ return Math.max(1300 - elapsed*14, 650); }
+function coinSpawnInterval(){ return 900; }
 
-function spawnRed(){
-  const r = 20;
-  const y = r + Math.random()*(H - 2*r);
-  reds.push({x: W+r, y, r});
+function stageOf(progress){
+  if(progress < 0.4) return 0; // Züri
+  if(progress < 0.75) return 1; // See
+  return 2; // Schindellegi
 }
-function spawnGreen(){
-  const r = 18;
-  const y = r + Math.random()*(H - 2*r);
-  greens.push({x: W+r, y, r});
+
+function spawnObstacle(){
+  const l = Math.floor(Math.random()*3);
+  const type = Math.random() < 0.5 ? 'car' : 'hole';
+  obstacles.push({lane:l, x:W+40, w:34, h:34, type});
 }
+function spawnCoin(){
+  const l = Math.floor(Math.random()*3);
+  coins.push({lane:l, x:W+40, r:12});
+}
+
+function jump(){
+  if(player.onGround && state==='playing'){
+    player.vy = -11.5;
+    player.onGround = false;
+  }
+}
+function moveLeft(){ if(lane>0){ lane--; } }
+function moveRight(){ if(lane<2){ lane++; } }
 
 function update(dt){
   elapsed += dt/1000;
-  const speed = currentSpeed();
-  player.y += (player.targetY - player.y) * Math.min(1, dt/90);
-  player.y = Math.max(player.r, Math.min(H-player.r, player.y));
+  const spd = speed();
 
-  lastRedSpawn += dt;
-  if(lastRedSpawn > redSpawnInterval()){ spawnRed(); lastRedSpawn = 0; }
-  lastGreenSpawn += dt;
-  if(lastGreenSpawn > greenSpawnInterval()){ spawnGreen(); lastGreenSpawn = 0; }
+  // gravity
+  player.vy += 0.55*(dt/16.7);
+  player.y += player.vy*(dt/16.7);
+  if(player.y >= GROUND_Y){ player.y = GROUND_Y; player.vy = 0; player.onGround = true; }
+  player.x += (LANE_X[lane]-player.x)*Math.min(1, dt/90);
 
-  reds.forEach(o => o.x -= speed*(dt/16.7));
-  greens.forEach(o => o.x -= speed*(dt/16.7));
-  reds = reds.filter(o => o.x > -30);
-  greens = greens.filter(o => o.x > -30);
+  lastObSpawn += dt;
+  if(lastObSpawn > obSpawnInterval()){ spawnObstacle(); lastObSpawn = 0; }
+  lastCoinSpawn += dt;
+  if(lastCoinSpawn > coinSpawnInterval()){ spawnCoin(); lastCoinSpawn = 0; }
 
-  for(const o of reds){
-    const dx = o.x-player.x, dy = o.y-player.y;
-    if(Math.sqrt(dx*dx+dy*dy) < o.r+player.r-4){ startSwarm(false); return; }
+  obstacles.forEach(o => o.x -= spd*(dt/16.7));
+  coins.forEach(c => c.x -= spd*(dt/16.7));
+  obstacles = obstacles.filter(o => o.x > -50);
+  coins = coins.filter(c => c.x > -50);
+
+  if(invuln>0) invuln -= dt;
+  const airborne = player.y < GROUND_Y - 14;
+  for(const o of obstacles){
+    if(o.hit) continue;
+    const closeX = Math.abs(o.x - player.x) < (o.w/2 + player.w/2 - 8);
+    const sameLane = o.lane === lane;
+    if(closeX && sameLane && !airborne && invuln<=0){
+      o.hit = true;
+      lives--;
+      invuln = 1000;
+      livesDisplay.textContent = '❤️'.repeat(Math.max(lives,0)) + '🖤'.repeat(3-Math.max(lives,0));
+      if(lives<=0){ endGame(false); return; }
+    }
   }
-  greens = greens.filter(o => {
-    const dx = o.x-player.x, dy = o.y-player.y;
-    if(Math.sqrt(dx*dx+dy*dy) < o.r+player.r){
+  coins = coins.filter(c => {
+    const closeX = Math.abs(c.x-player.x) < 26;
+    if(closeX && c.lane===lane){
       score++;
-      scoreDisplay.textContent = '🟢 ' + score;
-      if(score >= CAP){ startSwarm(true); }
+      scoreDisplay.textContent = '🪙 ' + score;
       return false;
     }
     return true;
   });
+
+  const progress = Math.min(elapsed/TARGET_TIME, 1);
+  routeFill.style.width = (progress*100)+'%';
+  if(progress >= 1){ endGame(true); return; }
 }
 
-function drawRoad(){
-  ctx.fillStyle = '#4a4a4a'; ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 4;
-  ctx.setLineDash([22,18]);
-  const offset = (elapsed*140) % 40;
-  ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+function drawBackground(progress){
+  const stage = stageOf(progress);
+  let sky1, sky2, ground;
+  if(stage===0){ sky1='#cfe9f7'; sky2='#eaf7ec'; ground='#7a7a7a'; }
+  else if(stage===1){ sky1='#a8d8f0'; sky2='#dff3fb'; ground='#3a7ca5'; }
+  else { sky1='#fdeecb'; sky2='#eaf7ec'; ground='#6FCF97'; }
+  const grad = ctx.createLinearGradient(0,0,0,GROUND_Y);
+  grad.addColorStop(0,sky1); grad.addColorStop(1,sky2);
+  ctx.fillStyle = grad; ctx.fillRect(0,0,W,GROUND_Y);
+  ctx.fillStyle = ground; ctx.fillRect(0,GROUND_Y+20,W,H-GROUND_Y-20);
+  // simple scenery marks
+  ctx.font = '26px serif'; ctx.textAlign='center';
+  const off = (elapsed*40)%120;
+  for(let i=-1;i<4;i++){
+    const x = i*120 - off;
+    if(stage===0) ctx.fillText('🏢', x, GROUND_Y-10);
+    else if(stage===1) ctx.fillText('⛵', x, GROUND_Y-6);
+    else ctx.fillText('🌲', x, GROUND_Y-6);
+  }
+  // lane guide lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.setLineDash([14,10]); ctx.lineWidth=2;
+  [0.39, 0.61].forEach(f=>{
+    ctx.beginPath(); ctx.moveTo(W*f, GROUND_Y+20); ctx.lineTo(W*f, H); ctx.stroke();
+  });
   ctx.setLineDash([]);
-}
-
-function drawPlayer(){
-  ctx.font = '42px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('🛵', player.x, player.y);
 }
 
 function draw(){
   ctx.clearRect(0,0,W,H);
-  drawRoad();
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.font = '34px serif';
-  reds.forEach(o => ctx.fillText('🔴', o.x, o.y));
-  ctx.font = '30px serif';
-  greens.forEach(o => ctx.fillText('🟢', o.x, o.y));
-  drawPlayer();
+  const progress = Math.min(elapsed/TARGET_TIME, 1);
+  drawBackground(progress);
+
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='30px serif';
+  obstacles.forEach(o => ctx.fillText(o.type==='car' ? '🚗' : '🕳️', LANE_X[o.lane], GROUND_Y-10));
+  ctx.font='26px serif';
+  coins.forEach(c => ctx.fillText('🪙', LANE_X[c.lane], GROUND_Y-10));
+
+  ctx.save();
+  if(invuln>0 && Math.floor(gameFrame/4)%2===0) ctx.globalAlpha = 0.35;
+  ctx.font='40px serif';
+  ctx.fillText('🛵', player.x, player.y-18);
+  ctx.restore();
 }
 
+let gameFrame = 0;
 function loop(t){
   if(state !== 'playing'){ return; }
   const dt = Math.min(t-lastTime, 40); lastTime = t;
+  gameFrame++;
   update(dt);
+  if(state !== 'playing') return;
   draw();
   animId = requestAnimationFrame(loop);
 }
@@ -165,61 +244,39 @@ function startGame(){
   animId = requestAnimationFrame(loop);
 }
 
-function startSwarm(won){
-  cancelAnimationFrame(animId);
-  state = 'swarming';
-  swarm = [];
-  const swarmStart = performance.now();
-  function swarmStep(t){
-    const p = Math.min((t-swarmStart)/700, 1);
-    if(swarm.length < 45 && Math.random() < 0.9){
-      swarm.push({ x: Math.random()*W, y: Math.random()*H, size: 20+Math.random()*26, rot: Math.random()*Math.PI*2 });
-    }
-    ctx.clearRect(0,0,W,H);
-    drawRoad();
-    if(!won) drawPlayer();
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    swarm.forEach(s => {
-      ctx.save(); ctx.translate(s.x,s.y); ctx.rotate(s.rot);
-      ctx.font = s.size+'px serif';
-      ctx.fillText(won ? '🟢' : '🚨', 0, 0);
-      ctx.restore();
-    });
-    if(p < 1){ requestAnimationFrame(swarmStep); } else { endGame(won); }
-  }
-  requestAnimationFrame(swarmStep);
-}
-
 function endGame(won){
   state = won ? 'win' : 'over';
+  cancelAnimationFrame(animId);
   if(score > highscore){
     highscore = score;
-    localStorage.setItem('vespa-game-highscore', highscore);
-    highscoreDisplay.textContent = 'Rekord: ' + highscore;
+    localStorage.setItem('vespa-run-highscore', highscore);
   }
   overlay.innerHTML = won
-    ? `<h2>🛵💨 Nie erwütscht!</h2><p>25 grüni gschafft. D Pölizei hät käi Chance gäge dich.</p><button class="btn" id="restart-btn">Nomol</button>`
-    : `<h2>Bussgäld! 🚨</h2><p>${score} grüni gschafft. ${score>=highscore && score>0 ?'Neue Rekord! 🎉':'Versuechs nomol!'}</p><button class="btn" id="restart-btn">Nomol</button>`;
+    ? `<h2>🏡 Aacho in Schindellegi!</h2><p>${score} Münz gsammlet. Willkomme deheim, Zabka!</p><button class="btn" id="restart-btn">Nomol fahre</button>`
+    : `<h2>Uufgha! 🛵💥</h2><p>${score} Münz gschafft, bis d Reis abbroche isch. Rekord: ${highscore}</p><button class="btn" id="restart-btn">Nomol fahre</button>`;
   overlay.style.display = 'flex';
   document.getElementById('restart-btn').onclick = startGame;
 }
 
 startBtn.onclick = startGame;
 
-function setTargetFromEvent(clientY){
-  const rect = canvas.getBoundingClientRect();
-  const scale = H / rect.height;
-  player.targetY = (clientY - rect.top) * scale;
-}
-canvas.addEventListener('pointermove', e => { if(state==='playing') setTargetFromEvent(e.clientY); });
-canvas.addEventListener('pointerdown', e => { if(state==='playing') setTargetFromEvent(e.clientY); });
-canvas.addEventListener('touchstart', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientY); e.preventDefault(); } }, {passive:false});
-canvas.addEventListener('touchmove', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientY); e.preventDefault(); } }, {passive:false});
 document.addEventListener('keydown', e => {
   if(state!=='playing') return;
-  if(e.key === 'ArrowUp') player.targetY -= 40;
-  if(e.key === 'ArrowDown') player.targetY += 40;
+  if(e.key === 'ArrowLeft') moveLeft();
+  if(e.key === 'ArrowRight') moveRight();
+  if(e.key === 'ArrowUp' || e.key === ' '){ jump(); e.preventDefault(); }
 });
+document.getElementById('btn-left').addEventListener('click', moveLeft);
+document.getElementById('btn-right').addEventListener('click', moveRight);
+document.getElementById('btn-jump').addEventListener('click', jump);
+canvas.addEventListener('touchstart', e => {
+  if(state!=='playing') return;
+  const rect = canvas.getBoundingClientRect();
+  const relX = (e.touches[0].clientX - rect.left) / rect.width;
+  if(relX < 0.33) moveLeft();
+  else if(relX > 0.66) moveRight();
+  else jump();
+}, {passive:true});
 </script>
 </body>
 </html>
