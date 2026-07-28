@@ -103,6 +103,16 @@ input[type=date]:focus{outline:none; border-color:var(--leaf);}
 header.top{max-width:640px; margin:0 auto; padding:20px 16px 0; display:flex; justify-content:space-between; align-items:center;}
 header.top a{font-size:13px; color:var(--leaf-d); text-decoration:none; font-weight:700;}
 
+.sticky-note{
+  display:block; max-width:220px; margin:20px auto 8px; background:#FFF3A0;
+  color:#4a3c00; text-decoration:none; padding:18px 16px 16px; text-align:center;
+  font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; line-height:1.4;
+  box-shadow:0 8px 18px rgba(0,0,0,0.18); transform:rotate(-3deg); position:relative;
+  border-radius:2px;
+}
+.sticky-note:hover{transform:rotate(-1deg) scale(1.02);}
+.sticky-note .pin{position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-size:20px;}
+
 /* Sticky Nav (mobile-first) */
 .stickynav{
   position:sticky; top:0; z-index:50; background:rgba(255,255,255,0.92);
