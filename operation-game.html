@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Fabis Schoggi-Turm</title>
+<title>Fabis Shopping-Sucht</title>
 <link rel="stylesheet" href="assets/style.css">
 <style>
 body{overscroll-behavior:none;}
@@ -30,11 +30,11 @@ body{overscroll-behavior:none;}
 </header>
 <div class="game-page-wrap">
   <div class="title-compact">
-    <h1>🍫 Fabis Schoggi-Turm</h1>
-    <p>Tipp im richtige Momänt zum Abelah — je präziser, desto höcher de Turm.</p>
+    <h1>🛍️ Fabis Shopping-Sucht</h1>
+    <p>Tipp im richtige Momänt zum Abelah — je präziser, desto höcher de Stapel Iichauftüte.</p>
   </div>
 
-  <div class="game-hud"><span id="score-display">🍫 0</span><span id="highscore-display">Rekord: 0</span></div>
+  <div class="game-hud"><span id="score-display">🛍️ 0</span><span id="highscore-display">Rekord: 0</span></div>
   <div class="game-shell">
     <canvas id="gameCanvas" width="380" height="640"></canvas>
     <div class="game-overlay" id="overlay">
@@ -55,7 +55,7 @@ const highscoreDisplay = document.getElementById('highscore-display');
 const startBtn = document.getElementById('start-btn');
 
 const BLOCK_H = 34;
-const ICONS = ['🍫','👛','👠','🧴','🍬','👜'];
+const ICONS = ['🛍️','👛','👠','💄','👗','🧥'];
 let highscore = parseInt(localStorage.getItem('turm-game-highscore') || '0');
 highscoreDisplay.textContent = 'Rekord: ' + highscore;
 
@@ -70,10 +70,10 @@ let particles = [];
 let shakeT = 0;
 
 function reset(){
-  stack = [{x: W/2 - 70, w: 140, icon:'🍫'}];
+  stack = [{x: W/2 - 70, w: 140, icon:'🛍️'}];
   cameraY = 0; score = 0; particles = []; shakeT = 0;
   spawnNext();
-  scoreDisplay.textContent = '🍫 0';
+  scoreDisplay.textContent = '🛍️ 0';
 }
 
 function spawnNext(){
@@ -101,13 +101,27 @@ function drop(){
   }
   stack.push({x: overlapStart, w: overlapW, icon: current.icon});
   score++;
-  scoreDisplay.textContent = '🍫 ' + score;
+  scoreDisplay.textContent = '🛍️ ' + score;
   if(overlapW < current.w*0.94){ shakeT = 200; }
   spawnNext();
   const targetCam = Math.max(0, (stack.length-6) * BLOCK_H);
   cameraAnimTo = targetCam;
+  if(score >= 30){ startWin(); }
 }
 let cameraAnimTo = 0;
+
+function startWin(){
+  cancelAnimationFrame(animId);
+  state = 'win';
+  if(score > highscore){
+    highscore = score;
+    localStorage.setItem('turm-game-highscore', highscore);
+    highscoreDisplay.textContent = 'Rekord: ' + highscore;
+  }
+  overlay.innerHTML = `<h2>🏆 30 Tüte gstapled!</h2><p>Offiziell Shopping-Weltrekord. Regel: wär grad rächts vo dir hockt, schuldet dir jetzt en Drink! 🍹</p><button class="btn" id="restart-btn">Nomol</button>`;
+  overlay.style.display = 'flex';
+  document.getElementById('restart-btn').onclick = startGame;
+}
 
 function startFail(){
   cancelAnimationFrame(animId);
@@ -117,9 +131,7 @@ function startFail(){
     localStorage.setItem('turm-game-highscore', highscore);
     highscoreDisplay.textContent = 'Rekord: ' + highscore;
   }
-  overlay.innerHTML = score >= 25
-    ? `<h2>🏆 Turm-Meischterin!</h2><p>${score} Stöck gstapled — perfekti Balance!</p><button class="btn" id="restart-btn">Nomol</button>`
-    : `<h2>Umgheit! 💥</h2><p>${score} Stöck gschafft. ${score>=highscore && score>0?'Neue Rekord! 🎉':'Versuechs nomol!'}</p><button class="btn" id="restart-btn">Nomol</button>`;
+  overlay.innerHTML = `<h2>Umgheit! 💥</h2><p>${score} Tüte gschafft. ${score>=highscore && score>0?'Neue Rekord! 🎉':'Versuechs nomol!'}</p><button class="btn" id="restart-btn">Nomol</button>`;
   overlay.style.display = 'flex';
   document.getElementById('restart-btn').onclick = startGame;
 }

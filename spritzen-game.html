@@ -65,6 +65,7 @@ body{overscroll-behavior:none;}
     <span>💉💉 Doppelt: 2 Schuss</span>
     <span>🛡️ Impfig: kurz immun</span>
     <span>🐌 Ziitlupe: Keim langsamer</span>
+    <span>❤️ Extra-Läbe</span>
   </div>
 </div>
 
@@ -100,6 +101,8 @@ let player = { x: W/2, targetX: W/2, y: H-50, r: 22 };
 let germs = [];
 let bullets = [];
 let particles = [];
+let perkItems = [];
+let lastPerkSpawn = 0;
 let score = 0;
 let lives = 3;
 let level = 1;
@@ -119,13 +122,14 @@ let gameClock = 0;
 function reset(){
   player.x = W/2; player.targetX = W/2;
   germs = []; bullets = []; particles = [];
+  perkItems = []; lastPerkSpawn = 0;
   score = 0; lives = 3; level = 1; killsThisLevel = 0; bosses = [];
   bossProjectiles = []; playerInvuln = 0;
   elapsed = 0; lastGermSpawn = 0; gameClock = 0; isFiring = false;
   perks = { laser:0, double:0, impfig:0, zitlupe:0 };
   scoreDisplay.textContent = '💉 0';
   levelDisplay.textContent = 'Level 1/' + MAX_LEVEL;
-  livesDisplay.textContent = '❤️❤️❤️';
+  livesDisplay.textContent = '❤️ ' + lives;
   bossBarWrap.style.display = 'none';
 }
 
@@ -149,13 +153,19 @@ function spawnGerm(){
   const x = r + Math.random()*(W-2*r);
   const types = unlockedTypes();
   const emoji = types[Math.floor(Math.random()*types.length)];
-  const carriesPerk = Math.random() < 0.13;
-  germs.push({x, y:-r, r, wobble: Math.random()*Math.PI*2, emoji, perk: carriesPerk ? randomPerk() : null});
+  germs.push({x, y:-r, r, wobble: Math.random()*Math.PI*2, emoji});
 }
 
-function randomPerk(){
-  const keys = ['laser','double','impfig','zitlupe'];
+function randomPerkType(){
+  const keys = ['laser','double','impfig','zitlupe','life'];
   return keys[Math.floor(Math.random()*keys.length)];
+}
+const PERK_EMOJI = { laser:'🔴', double:'💉', impfig:'🛡️', zitlupe:'🐌', life:'❤️' };
+
+function spawnPerkItem(){
+  const r = 20;
+  const x = r + Math.random()*(W-2*r);
+  perkItems.push({x, y:-r, r, type: randomPerkType()});
 }
 
 function makeBoss(name, emoji, hp, x, stage){
@@ -182,6 +192,12 @@ function updateBossBar(){
 }
 
 function activatePerk(p){
+  if(p === 'life'){
+    lives = Math.min(lives+1, 5);
+    livesDisplay.textContent = '❤️ ' + lives;
+    showToast('❤️ Extra-Läbe!', 1500);
+    return;
+  }
   const dur = { laser:6000, double:8000, impfig:6000, zitlupe:5000 }[p];
   perks[p] = gameClock + dur;
   const labels = { laser:'🔴 Laser-Strahl aktiv!', double:'💉💉 Doppelspritze!', impfig:'🛡️ Impfig — kurz immun!', zitlupe:'🐌 Ziitlupe aktiv!' };
@@ -213,6 +229,17 @@ function update(dt){
     lastGermSpawn += dt;
     if(lastGermSpawn > germSpawnInterval()){ spawnGerm(); lastGermSpawn = 0; }
   }
+  lastPerkSpawn += dt;
+  if(lastPerkSpawn > 7000 + Math.random()*3000){ spawnPerkItem(); lastPerkSpawn = 0; }
+  perkItems.forEach(p => p.y += fallSpeed()*0.85*(1));
+  perkItems = perkItems.filter(p => {
+    const dx=p.x-player.x, dy=p.y-player.y;
+    if(Math.sqrt(dx*dx+dy*dy) < p.r+player.r){
+      activatePerk(p.type);
+      return false;
+    }
+    return p.y < H+30;
+  });
 
   const fs = fallSpeed();
   germs.forEach(g => { g.y += fs*(dt/16.7); g.wobble += 0.05; g.x += Math.sin(g.wobble)*0.6; });
@@ -243,7 +270,7 @@ function update(dt){
       p.dead = true;
       lives--;
       playerInvuln = 900;
-      livesDisplay.textContent = '❤️'.repeat(Math.max(lives,0)) + '🖤'.repeat(3-Math.max(lives,0));
+      livesDisplay.textContent = '❤️ ' + Math.max(lives,0);
       if(lives <= 0){ endGame(false); return; }
     }
   }
@@ -256,7 +283,6 @@ function update(dt){
         g.hit = true;
         score++; killsThisLevel++;
         scoreDisplay.textContent = '💉 ' + score;
-        if(g.perk) activatePerk(g.perk);
         particles.push({x:g.x,y:g.y,life:200});
       }
     });
@@ -277,7 +303,6 @@ function update(dt){
         g.hit = true; b.hit = true;
         score++; killsThisLevel++;
         scoreDisplay.textContent = '💉 ' + score;
-        if(g.perk) activatePerk(g.perk);
         particles.push({x:g.x,y:g.y,life:250});
       }
     }
@@ -341,7 +366,7 @@ function update(dt){
     if(g.y - g.r > H){
       if(!immuneNow){
         lives--;
-        livesDisplay.textContent = '❤️'.repeat(Math.max(lives,0)) + '🖤'.repeat(3-Math.max(lives,0));
+        livesDisplay.textContent = '❤️ ' + Math.max(lives,0);
         if(lives <= 0){ endGame(false); return; }
       }
     } else remaining.push(g);
@@ -359,7 +384,14 @@ function draw(){
   ctx.font = '28px serif';
   germs.forEach(g => {
     ctx.fillText(g.emoji, g.x, g.y);
-    if(g.perk){ ctx.font='14px serif'; ctx.fillText('✨', g.x+14, g.y-14); ctx.font='28px serif'; }
+  });
+
+  perkItems.forEach(p => {
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,211,122,0.9)'; ctx.fill();
+    ctx.strokeStyle = '#c98c1f'; ctx.lineWidth=2; ctx.stroke();
+    ctx.font = '20px serif';
+    ctx.fillText(PERK_EMOJI[p.type], p.x, p.y);
   });
 
   bosses.forEach(bo=>{
