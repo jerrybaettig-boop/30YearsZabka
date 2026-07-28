@@ -82,9 +82,9 @@ function reset(){
   scoreDisplay.textContent = '🐸 0';
 }
 
-function currentSpeed(){ return Math.min(2.6 + elapsed*0.045, 6.5); }
-function roachSpawnInterval(){ return Math.max(1100 - elapsed*22, 480); }
-function frogSpawnInterval(){ return Math.max(1800 - elapsed*15, 1100); }
+function currentSpeed(){ return Math.min(3.2 + elapsed*0.08, 9); }
+function roachSpawnInterval(){ return Math.max(900 - elapsed*30, 260); }
+function frogSpawnInterval(){ return Math.max(1900 - elapsed*12, 1000); }
 
 function spawnRoach(){
   const r = 20;
@@ -115,7 +115,7 @@ function update(dt){
 
   for(const o of roaches){
     const dx = o.x-player.x, dy = o.y-player.y;
-    if(Math.sqrt(dx*dx+dy*dy) < o.r+player.r-10){ startSwarm(false); return; }
+    if(Math.sqrt(dx*dx+dy*dy) < o.r+player.r-4){ startSwarm(false); return; }
   }
   frogs = frogs.filter(o => {
     const dx = o.x-player.x, dy = o.y-player.y;

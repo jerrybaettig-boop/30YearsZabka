@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Spritze gäge Chäime</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+body{overscroll-behavior:none;}
+.game-page-wrap{max-width:480px; margin:0 auto; padding:16px;}
+#gameCanvas{width:100%; height:auto; display:block; border-radius:20px; touch-action:none; background:linear-gradient(180deg,#EAF7EC,#D8F0E0);}
+.game-shell{position:relative; border-radius:20px; overflow:hidden; box-shadow:0 12px 34px rgba(47,143,91,0.2); border:2px solid #E3F5E9;}
+.game-overlay{
+  position:absolute; inset:0; background:rgba(18,48,36,0.82); color:#fff;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:20px; gap:10px; z-index:5;
+}
+.game-overlay h2{font-family:'Baloo 2',sans-serif; font-size:24px; margin:0; color:#FFD37A;}
+.game-overlay p{color:#EAF7EC; margin:0; font-size:14px;}
+.game-hud{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--leaf-d); font-size:15px;}
+.title-compact{margin-bottom:10px;}
+.title-compact h1{margin-bottom:2px; font-size:22px;}
+.title-compact p{margin:0; font-size:13px;}
+</style>
+</head>
+<body>
+<header class="stickynav">
+  <a href="index.html" class="brand">🐸 Zabka-Fäscht</a>
+  <a href="index.html" class="back">← zrugg</a>
+</header>
+<div class="game-page-wrap">
+  <div class="title-compact">
+    <h1>💉 Spritze gäge Chäime</h1>
+    <p>Zieh d Spritze hin und här, tipp zum Schiesse. Chäim dörefah la = Läbe wäg. 3 Läbe hesch.</p>
+  </div>
+
+  <div class="game-hud"><span id="score-display">💉 0</span><span id="lives-display">❤️❤️❤️</span></div>
+  <div class="game-shell">
+    <canvas id="gameCanvas" width="380" height="680"></canvas>
+    <div class="game-overlay" id="overlay">
+      <h2>Bereit für d Schicht?</h2>
+      <p>Finger uf de Canvas leg zum ziele, tippe zum schiesse.</p>
+      <button class="btn" id="start-btn">Schicht start</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const overlay = document.getElementById('overlay');
+const scoreDisplay = document.getElementById('score-display');
+const livesDisplay = document.getElementById('lives-display');
+const startBtn = document.getElementById('start-btn');
+
+const WIN_SCORE = 50;
+let highscore = parseInt(localStorage.getItem('spritze-game-highscore') || '0');
+
+let state = 'idle';
+let player = { x: W/2, targetX: W/2, y: H-50, r: 22 };
+let germs = [];
+let bullets = [];
+let score = 0;
+let lives = 3;
+let elapsed = 0;
+let lastGermSpawn = 0;
+let lastShot = 0;
+let animId = null;
+let lastTime = 0;
+
+function reset(){
+  player.x = W/2; player.targetX = W/2;
+  germs = []; bullets = [];
+  score = 0; lives = 3; elapsed = 0; lastGermSpawn = 0;
+  scoreDisplay.textContent = '💉 0';
+  livesDisplay.textContent = '❤️❤️❤️';
+}
+
+function fallSpeed(){ return Math.min(1.6 + elapsed*0.05, 5); }
+function germSpawnInterval(){ return Math.max(1000 - elapsed*20, 380); }
+
+function spawnGerm(){
+  const r = 18 + Math.random()*8;
+  const x = r + Math.random()*(W-2*r);
+  germs.push({x, y:-r, r, wobble: Math.random()*Math.PI*2});
+}
+
+function shoot(){
+  const now = performance.now();
+  if(now - lastShot < 220) return;
+  lastShot = now;
+  bullets.push({x: player.x, y: player.y-20});
+}
+
+function update(dt){
+  elapsed += dt/1000;
+  player.x += (player.targetX - player.x) * Math.min(1, dt/80);
+  player.x = Math.max(player.r, Math.min(W-player.r, player.x));
+
+  lastGermSpawn += dt;
+  if(lastGermSpawn > germSpawnInterval()){ spawnGerm(); lastGermSpawn = 0; }
+
+  const fs = fallSpeed();
+  germs.forEach(g => { g.y += fs*(dt/16.7); g.wobble += 0.05; g.x += Math.sin(g.wobble)*0.6; });
+  bullets.forEach(b => b.y -= 9*(dt/16.7));
+  bullets = bullets.filter(b => b.y > -20);
+
+  // bullet vs germ
+  for(const b of bullets){
+    for(const g of germs){
+      const dx=b.x-g.x, dy=b.y-g.y;
+      if(Math.sqrt(dx*dx+dy*dy) < g.r){
+        g.hit = true; b.hit = true;
+        score++;
+        scoreDisplay.textContent = '💉 ' + score;
+        if(score >= WIN_SCORE){ endGame(true); return; }
+      }
+    }
+  }
+  bullets = bullets.filter(b => !b.hit);
+  germs = germs.filter(g => !g.hit);
+
+  // germ reaching bottom
+  const remaining = [];
+  for(const g of germs){
+    if(g.y - g.r > H){
+      lives--;
+      livesDisplay.textContent = '❤️'.repeat(Math.max(lives,0)) + '🖤'.repeat(3-Math.max(lives,0));
+      if(lives <= 0){ endGame(false); return; }
+    } else remaining.push(g);
+  }
+  germs = remaining;
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#EAF7EC'); grad.addColorStop(1,'#D3EEDD');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font = '30px serif';
+  germs.forEach(g => ctx.fillText('🦠', g.x, g.y));
+
+  ctx.strokeStyle = '#2F8F5B'; ctx.lineWidth = 4; ctx.lineCap='round';
+  bullets.forEach(b => { ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x, b.y+14); ctx.stroke(); });
+
+  ctx.font = '38px serif';
+  ctx.fillText('💉', player.x, player.y);
+}
+
+function loop(t){
+  if(state !== 'playing'){ return; }
+  const dt = Math.min(t-lastTime, 40); lastTime = t;
+  update(dt);
+  draw();
+  animId = requestAnimationFrame(loop);
+}
+
+function startGame(){
+  reset();
+  state = 'playing';
+  overlay.style.display = 'none';
+  lastTime = performance.now();
+  animId = requestAnimationFrame(loop);
+}
+
+function endGame(won){
+  state = won ? 'win' : 'over';
+  cancelAnimationFrame(animId);
+  if(score > highscore){
+    highscore = score;
+    localStorage.setItem('spritze-game-highscore', highscore);
+  }
+  overlay.innerHTML = won
+    ? `<h2>☕ Pause verdient!</h2><p>50 Chäime erledigt. D Schicht isch gschafft, Zit für Znüni!</p><button class="btn" id="restart-btn">Nomol spile</button>`
+    : `<h2>Schicht vorbei</h2><p>${score} Chäim erwütscht. Rekord: ${highscore}</p><button class="btn" id="restart-btn">Nomol spile</button>`;
+  overlay.style.display = 'flex';
+  document.getElementById('restart-btn').onclick = startGame;
+}
+
+startBtn.onclick = startGame;
+
+function setTargetFromEvent(clientX){
+  const rect = canvas.getBoundingClientRect();
+  const scale = W / rect.width;
+  player.targetX = (clientX - rect.left) * scale;
+}
+canvas.addEventListener('pointerdown', e => { if(state==='playing'){ setTargetFromEvent(e.clientX); shoot(); } });
+canvas.addEventListener('pointermove', e => { if(state==='playing') setTargetFromEvent(e.clientX); });
+canvas.addEventListener('touchstart', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientX); shoot(); e.preventDefault(); } }, {passive:false});
+canvas.addEventListener('touchmove', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientX); e.preventDefault(); } }, {passive:false});
+document.addEventListener('keydown', e => {
+  if(state!=='playing') return;
+  if(e.key === 'ArrowLeft') player.targetX -= 30;
+  if(e.key === 'ArrowRight') player.targetX += 30;
+  if(e.key === ' '){ shoot(); e.preventDefault(); }
+});
+</script>
+</body>
+</html>
