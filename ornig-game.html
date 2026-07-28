@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Fabis Ornig-Alarm</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+body{overscroll-behavior:none;}
+.game-page-wrap{max-width:480px; margin:0 auto; padding:16px;}
+#gameCanvas{width:100%; height:auto; display:block; border-radius:20px; touch-action:none; background:linear-gradient(180deg,#EAF7EC,#D8F0E0);}
+.game-shell{position:relative; border-radius:20px; overflow:hidden; box-shadow:0 12px 34px rgba(47,143,91,0.2); border:2px solid #E3F5E9;}
+.game-overlay{
+  position:absolute; inset:0; background:rgba(18,48,36,0.85); color:#fff;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:20px; gap:10px; z-index:5;
+}
+.game-overlay h2{font-family:'Baloo 2',sans-serif; font-size:24px; margin:0; color:#FFD37A;}
+.game-overlay p{color:#EAF7EC; margin:0; font-size:14px;}
+.game-hud{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-family:'Baloo 2',sans-serif; font-weight:700; color:var(--leaf-d); font-size:15px;}
+.title-compact{margin-bottom:10px;}
+.title-compact h1{margin-bottom:2px; font-size:22px;}
+.title-compact p{margin:0; font-size:13px;}
+</style>
+</head>
+<body>
+<header class="stickynav">
+  <a href="index.html" class="brand">🐸 Zabka-Fäscht</a>
+  <a href="index.html" class="back">← zrugg</a>
+</header>
+<div class="game-page-wrap">
+  <div class="title-compact">
+    <h1>🧺 Fabis Ornig-Alarm</h1>
+    <p>Fang alles wo abelöiht — ausser d Kakerlake! Zieh de Chorb mit Finger hin und här.</p>
+  </div>
+
+  <div class="game-hud"><span id="score-display">🧺 0</span><span id="lives-display">❤️❤️❤️</span></div>
+  <div class="game-shell">
+    <canvas id="gameCanvas" width="380" height="640"></canvas>
+    <div class="game-overlay" id="overlay">
+      <h2>Bereit zum Ufruume?</h2>
+      <p>Chorb zieh, Sache fange. Kakerlake NIE fange — 3 Läbe hesch.</p>
+      <button class="btn" id="start-btn">Los goht's</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const overlay = document.getElementById('overlay');
+const scoreDisplay = document.getElementById('score-display');
+const livesDisplay = document.getElementById('lives-display');
+const startBtn = document.getElementById('start-btn');
+
+const CAP = 40;
+const GOOD_ITEMS = ['🍫','🧦','👛','🧻','💊','🧴'];
+const BAD_ITEM = '🪳';
+let highscore = parseInt(localStorage.getItem('ornig-game-highscore') || '0');
+
+let state = 'idle';
+let basket = { x: W/2, targetX: W/2, w: 74, h: 40 };
+let items = [];
+let score = 0;
+let lives = 3;
+let elapsed = 0;
+let lastSpawn = 0;
+let animId = null;
+let lastTime = 0;
+let swarm = [];
+
+function reset(){
+  basket.x = W/2; basket.targetX = W/2;
+  items = []; swarm = [];
+  score = 0; lives = 3; elapsed = 0; lastSpawn = 0;
+  scoreDisplay.textContent = '🧺 0';
+  livesDisplay.textContent = '❤️❤️❤️';
+}
+
+function fallSpeed(){ return Math.min(2.2 + elapsed*0.055, 6.5); }
+function spawnInterval(){ return Math.max(850 - elapsed*20, 320); }
+
+function spawnItem(){
+  const isBad = Math.random() < 0.28;
+  const emoji = isBad ? BAD_ITEM : GOOD_ITEMS[Math.floor(Math.random()*GOOD_ITEMS.length)];
+  const x = 24 + Math.random()*(W-48);
+  items.push({x, y:-20, r:16, emoji, bad:isBad});
+}
+
+function update(dt){
+  elapsed += dt/1000;
+  basket.x += (basket.targetX - basket.x) * Math.min(1, dt/100);
+  basket.x = Math.max(basket.w/2, Math.min(W-basket.w/2, basket.x));
+
+  lastSpawn += dt;
+  if(lastSpawn > spawnInterval()){ spawnItem(); lastSpawn = 0; }
+
+  const fs = fallSpeed();
+  items.forEach(it => it.y += fs*(dt/16.7));
+
+  const basketY = H - 70;
+  const remaining = [];
+  for(const it of items){
+    if(it.y > basketY-18 && it.y < basketY+22 && Math.abs(it.x-basket.x) < basket.w/2){
+      if(it.bad){
+        lives--;
+        livesDisplay.textContent = '❤️'.repeat(Math.max(lives,0)) + '🖤'.repeat(3-Math.max(lives,0));
+        if(lives<=0){ startSwarm(false); return; }
+      } else {
+        score++;
+        scoreDisplay.textContent = '🧺 ' + score;
+        if(score >= CAP){ startSwarm(true); return; }
+      }
+      continue;
+    }
+    if(it.y < H+20) remaining.push(it);
+  }
+  items = remaining;
+}
+
+function drawBasket(){
+  ctx.font = '48px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🧺', basket.x, H-70);
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#EAF7EC'); grad.addColorStop(1,'#D3EEDD');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='30px serif';
+  items.forEach(it => ctx.fillText(it.emoji, it.x, it.y));
+
+  drawBasket();
+}
+
+function loop(t){
+  if(state !== 'playing'){ return; }
+  const dt = Math.min(t-lastTime, 40); lastTime = t;
+  update(dt);
+  if(state !== 'playing') return;
+  draw();
+  animId = requestAnimationFrame(loop);
+}
+
+function startGame(){
+  reset();
+  state = 'playing';
+  overlay.style.display = 'none';
+  lastTime = performance.now();
+  animId = requestAnimationFrame(loop);
+}
+
+function startSwarm(won){
+  cancelAnimationFrame(animId);
+  state = 'swarming';
+  swarm = [];
+  const swarmStart = performance.now();
+  function swarmStep(t){
+    const p = Math.min((t-swarmStart)/650, 1);
+    if(swarm.length < 40 && Math.random() < 0.9){
+      swarm.push({ x: Math.random()*W, y: Math.random()*H, size: 20+Math.random()*24, rot: Math.random()*Math.PI*2 });
+    }
+    ctx.clearRect(0,0,W,H);
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'#EAF7EC'); grad.addColorStop(1,'#D3EEDD');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+    if(!won) drawBasket();
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    swarm.forEach(s => {
+      ctx.save(); ctx.translate(s.x,s.y); ctx.rotate(s.rot);
+      ctx.font = s.size+'px serif';
+      ctx.fillText(won ? '🍫' : '🪳', 0, 0);
+      ctx.restore();
+    });
+    if(p < 1){ requestAnimationFrame(swarmStep); } else { endGame(won); }
+  }
+  requestAnimationFrame(swarmStep);
+}
+
+function endGame(won){
+  state = won ? 'win' : 'over';
+  cancelAnimationFrame(animId);
+  if(score > highscore){
+    highscore = score;
+    localStorage.setItem('ornig-game-highscore', highscore);
+  }
+  overlay.innerHTML = won
+    ? `<h2>🏆 Ornig-Meischterin!</h2><p>40 Sache erwütscht, käni Kakerlake verpasst. Perfekti Bilanz!</p><button class="btn" id="restart-btn">Nomol</button>`
+    : `<h2>Chaos gwunne 🪳</h2><p>${score} Sache gfange. Rekord: ${highscore}</p><button class="btn" id="restart-btn">Nomol</button>`;
+  overlay.style.display = 'flex';
+  document.getElementById('restart-btn').onclick = startGame;
+}
+
+startBtn.onclick = startGame;
+
+function setTargetFromEvent(clientX){
+  const rect = canvas.getBoundingClientRect();
+  const scale = W / rect.width;
+  basket.targetX = (clientX - rect.left) * scale;
+}
+canvas.addEventListener('pointermove', e => { if(state==='playing') setTargetFromEvent(e.clientX); });
+canvas.addEventListener('pointerdown', e => { if(state==='playing') setTargetFromEvent(e.clientX); });
+canvas.addEventListener('touchstart', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientX); e.preventDefault(); } }, {passive:false});
+canvas.addEventListener('touchmove', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientX); e.preventDefault(); } }, {passive:false});
+document.addEventListener('keydown', e => {
+  if(state!=='playing') return;
+  if(e.key === 'ArrowLeft') basket.targetX -= 30;
+  if(e.key === 'ArrowRight') basket.targetX += 30;
+});
+</script>
+</body>
+</html>

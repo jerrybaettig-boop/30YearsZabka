@@ -30,15 +30,6 @@
         <a class="btn" href="https://padlet.com/jerrybaettig/fabi-memory-board-v1vvqu64s8zwareu" target="_blank" rel="noopener">Wand öffne & mitmache</a>
       </div>
     </div>
-
-    <div class="divider"></div>
-    <p class="small" style="margin-bottom:8px">Bonus: Live-Diashow (klappt je nach Handy/Browser nöd immer)</p>
-    <div class="padlet-slideshow" id="padlet-box" style="aspect-ratio:3/2;">
-      <iframe id="padlet-frame" src="https://padlet.com/embed/v1vvqu64s8zwareu/slideshow?autoplay=1&loop=1&duration=auto" allow="clipboard-write" allowfullscreen></iframe>
-    </div>
-    <div class="btn-row" style="margin-top:10px">
-      <button class="btn secondary" id="fullscreen-btn">⛶ Vollbild zeige</button>
-    </div>
   </div>
 
   <div class="card">
@@ -59,13 +50,5 @@
     </div>
   </div>
 </div>
-<script>
-document.getElementById('fullscreen-btn').onclick = () => {
-  const frame = document.getElementById('padlet-frame');
-  if(frame.requestFullscreen) frame.requestFullscreen();
-  else if(frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
-  else window.open('https://padlet.com/jerrybaettig/fabi-memory-board-v1vvqu64s8zwareu', '_blank');
-};
-</script>
 </body>
 </html>
