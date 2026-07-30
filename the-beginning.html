@@ -18,20 +18,11 @@
     <p>Es fing an, wie so vieles Gute im Leben: mit einer Mama. Mitere Mama wo nä Idee gha hät. D Mueter vor Fabi hät gfunde, ihre Brüeder söll üs zämebringe – und so si mir nach es paar lange Nächt vode Fabi in Laax en Abed spöter zäme a de Langstross glandet. Natürlich nur frünschaftlich zum Start sogar no mitm Stephan und em Diego am Start.</p>
     <p>Zums Iis bräche und luege ob mer alles mitenand überstönd händ mer direkt ide Karaoke-Bar Kaban zum gstartet. Peinlich isch am Jérôme sicher nix gsi, nach es paar Berliner-Luft und Vodka Maté häter au scho chöne Singe we de Robbie Williams (vo Wish). De Fabi hät de Live-Uftritt so imponiert dasmer nacher im Club Gonzo glandet sind. Definitiv en legendäre Ihstig gsi. Sbeste isch natürlich das au de Stephan bis fast zum Schluss debi gsi isch – bis mer ihn irgendwenn i sis eiget Uber händ müesse packe. Was a dem Abig sust no alles passiert isch, das überlahni eurer Fantasie...</p>
 
-    <div class="slideshow" id="beginning-slides">
-      <img src="images/fabi-portrait-1.jpg" class="active" alt="Fabi">
-      <img src="images/fabi-neon-portrait.jpg" alt="Fabi">
-      <img src="images/fabi-wein-schnuppern.jpg" alt="Fabi">
-      <button class="arrow left" onclick="moveSlide(-1)">‹</button>
-      <button class="arrow right" onclick="moveSlide(1)">›</button>
-      <div class="dots"></div>
-    </div>
     <video controls style="width:100%; border-radius:18px; margin-bottom:6px; background:#000;" poster="images/fabi-portrait-1.jpg">
-      <source src="images/video-beginning.mp4" type="video/mp4">
+      <source src="images/Kennenlern-Video.mp4" type="video/mp4">
       Dis Video wird bald da si.
     </video>
     <p class="small" style="margin-top:-8px">📹 Es chlises Highlight-Video vo dem Abed - mehr Bilder häts nid geh...</p>
-    <div class="center" style="margin-top:8px"><a class="btn secondary" href="https://photos.google.com/share/AF1QipPWsuSliC_8awiEgutKmg7_8H7yEXfn4u7dtHg8AoV71EeO2eqrcf9LIIEvdW3DXw/photo/AF1QipMCSipYCffxvEiOzleLw81CuyUEjYaN2Wowiho4?key=RmdQUkdPbkZUWXNqSWdCcWtnMHBDZC16LWNqMDRn" target="_blank" rel="noopener">🎥 Video öffne</a></div>
 
     <div class="divider"></div>
 
@@ -46,26 +37,5 @@
     <p>Kennengeleert hend mer üs bereits im Januar 2022, offiziell zäme si mer aber erscht sit em <b>11.11.22</b>, devor hät sich niemert getraut zum froge "wetsch mit mir gah?"</p>
   </div>
 </div>
-
-<script>
-let idx = 0;
-const imgs = document.querySelectorAll('#beginning-slides img');
-const dotsWrap = document.querySelector('#beginning-slides .dots');
-imgs.forEach((_,i)=>{
-  const d = document.createElement('div');
-  d.className = 'dot' + (i===0?' active':'');
-  d.onclick = () => goSlide(i);
-  dotsWrap.appendChild(d);
-});
-function goSlide(i){
-  imgs[idx].classList.remove('active');
-  dotsWrap.children[idx].classList.remove('active');
-  idx = (i+imgs.length)%imgs.length;
-  imgs[idx].classList.add('active');
-  dotsWrap.children[idx].classList.add('active');
-}
-function moveSlide(dir){ goSlide(idx+dir); }
-setInterval(()=>moveSlide(1), 4000);
-</script>
 </body>
 </html>
