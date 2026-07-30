@@ -29,7 +29,7 @@ const QUESTIONS = [
   { q: "Was hesch du früener, wo mer üs kennegleert hend, meistens gesse oder bstellt?",
     opts: ["Sushi", "Salat", "Burger", "Döner"], correct: 2 },
   { q: "Was isch üses verruckteschte Erläbnis gsi?",
-    opts: ["Fluag verpasst z Bangkok", "Alternativ-Tour zum Machu Picchu", "Sturm uf emne Kreuzfahrtschiff", "Autopanne i de Wüeschti"], correct: 1 },
+    opts: ["Fluag verpasst z Bangkok", "Fascht verpasste Alternativ-Tour zum Machu Picchu", "Sturm uf emne Kreuzfahrtschiff", "Autopanne i de Wüeschti"], correct: 1 },
   { q: "Syt welem Datum sind mer offiziell zäme?",
     opts: ["14.02.2022", "01.01.2023", "11.11.2022", "24.12.2022"], correct: 2 }
 ];
@@ -43,7 +43,7 @@ function render(){
     app.innerHTML = `
       <div class="emoji-big">🔒🐸</div>
       <h1 style="text-align:center">Bevor's witergoht...</h1>
-      <p style="text-align:center">Es paar Frage über üs. Jedi richtigi Antwort deckt es Zeiche vom Code uf. Wenn's chnorzt: frag doch öpper wo's weiss 😉</p>
+      <p style="text-align:center">Bevor's zu dim Gschänk gaht... Es paar Frage über üs. Jedi richtigi Antwort deckt es Zeiche vom Code uf und erst denn chasch dis Gschänk uspacke!</p>
       <div class="center"><button class="btn" id="start">Los</button></div>
     `;
     document.getElementById("start").onclick = () => { step = 1; render(); };
@@ -71,7 +71,7 @@ function render(){
         } else {
           btn.classList.add("wrong");
           setTimeout(()=>{
-            alert("Falsch! Das git jetzt en Shot für dich oder din Lieblingsmänsch dinere Wahl :P Los geht's nomol vo vorne...");
+            alert("Falsch! Das git jetzt en Shot für dich oder din Lieblingsmänsch dinere Wahl :-P Los gahts namol vo vorne!");
             step = 0; revealed = "";
             render();
           }, 400);

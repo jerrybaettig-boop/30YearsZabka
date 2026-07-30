@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eisbrecher</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.task-card{
+  background:linear-gradient(135deg,#6FCF97,#FF9FC0); border-radius:22px; padding:34px 24px;
+  text-align:center; color:#123024; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:19px;
+  line-height:1.4; min-height:160px; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 12px 30px rgba(47,143,91,0.25);
+}
+.group-tag{display:block; font-size:13px; font-weight:700; color:#123024; opacity:0.75; margin-bottom:8px;}
+</style>
+</head>
+<body>
+<header class="stickynav">
+  <a href="index.html" class="brand">🐸 Zabka-Fäscht</a>
+  <a href="index.html" class="back">← zrugg</a>
+</header>
+<div class="wrap">
+  <div class="card">
+    <div class="tag">Für alli am Fäscht</div>
+    <h1>Eisbrecher-Ufgabe</h1>
+    <p>Känned ihr nöd alli? Kei Problem — zieh e Ufgab, sueg der wär und mached das zämä!</p>
+  </div>
+
+  <div class="task-card" id="task-card">
+    <div>
+      <span class="group-tag">Tipp zum Start</span>
+      Drück de Knopf für dini erschti Ufgab!
+    </div>
+  </div>
+
+  <div class="center" style="margin-top:20px">
+    <button class="btn" id="draw-btn">🎲 Nächschti Ufgab</button>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  "Mach es Foti zäme mit de Fabi und öpperem, won du hüt na nöd kennsch.",
+  "Gang zur gröschte Person im Ruum und frag sie nach ihrer gröschte Angscht.",
+  "Gang zum jüngschte Mensch im Ruum und frag ihn/sie um en Lebens-Ratschlag.",
+  "Find öpper mit em gliche Vorname-Aafangsbuechstabe wie du und stellt enand vor.",
+  "Frag d Person näbet dir: was isch ihres Liebligs-Ässe?",
+  "Find drü Lüt, wo au scho i Südamerika gsi sind, und tuuscht en Reise-Tipp us.",
+  "Frag di nöchscht Person: was isch ihres bäschte Fabi-Erlebnis?",
+  "Mach es Gruppe-Foti mit mindeschtens 4 Lüt, wo du no nöd all kennsch.",
+  "Gang zur Person mit de dunkelschte Hoor und frag sie, was ihre Liebligs-Song grad isch.",
+  "Frag d Person näbet dir, was ihres Liebligs-Reiseziel wär und firum.",
+  "Gang zu öpperem, won du hüt na nöd gredet hesch, und stellt enand vor.",
+  "Frag 2 Lüt, was si am meischte a de Fabi schätze.",
+  "Mach es Foti mit em am bescht aagleite Gascht am Fäscht.",
+  "Find öpper, wo am glichen Ort wohnt wie du, und redet churz drüber.",
+  "Frag öpper Fremdes: was für en Beruf hät er/sie und was gfallt ihm/ihre draa.",
+  "Tuusch mit öpperem, won du nöd kennsch, e Handynummere us — für spätri Znacht-Ide.",
+  "Find d Person, wo hüt am wittischte häre greist isch fürs Fäscht.",
+  "Frag öpper: wie hend si d Fabi kennegleert?",
+  "Gang zu jemandem alleige stoht und frag ihn/sie öb er/sie sich zu öich setzt.",
+  "Find öpper mit em gliche Beruf wie du (oder emene ähnliche) und tuuscht öi us."
+];
+
+let lastIdx = -1;
+document.getElementById('draw-btn').onclick = () => {
+  let idx;
+  do { idx = Math.floor(Math.random()*TASKS.length); } while(idx === lastIdx && TASKS.length>1);
+  lastIdx = idx;
+  document.getElementById('task-card').innerHTML = `<div>${TASKS[idx]}</div>`;
+};
+</script>
+</body>
+</html>
