@@ -41,26 +41,36 @@
 
 <script>
 const TASKS = [
-  "Mach es Foti zäme mit de Fabi und öpperem, won du hüt na nöd kennsch.",
-  "Gang zur gröschte Person im Ruum und frag sie nach ihrer gröschte Angscht.",
-  "Gang zum jüngschte Mensch im Ruum und frag ihn/sie um en Lebens-Ratschlag.",
-  "Find öpper mit em gliche Vorname-Aafangsbuechstabe wie du und stellt enand vor.",
-  "Frag d Person näbet dir: was isch ihres Liebligs-Ässe?",
-  "Find drü Lüt, wo au scho i Südamerika gsi sind, und tuuscht en Reise-Tipp us.",
-  "Frag di nöchscht Person: was isch ihres bäschte Fabi-Erlebnis?",
-  "Mach es Gruppe-Foti mit mindeschtens 4 Lüt, wo du no nöd all kennsch.",
-  "Gang zur Person mit de dunkelschte Hoor und frag sie, was ihre Liebligs-Song grad isch.",
-  "Frag d Person näbet dir, was ihres Liebligs-Reiseziel wär und firum.",
-  "Gang zu öpperem, won du hüt na nöd gredet hesch, und stellt enand vor.",
-  "Frag 2 Lüt, was si am meischte a de Fabi schätze.",
-  "Mach es Foti mit em am bescht aagleite Gascht am Fäscht.",
-  "Find öpper, wo am glichen Ort wohnt wie du, und redet churz drüber.",
-  "Frag öpper Fremdes: was für en Beruf hät er/sie und was gfallt ihm/ihre draa.",
-  "Tuusch mit öpperem, won du nöd kennsch, e Handynummere us — für spätri Znacht-Ide.",
-  "Find d Person, wo hüt am wittischte häre greist isch fürs Fäscht.",
-  "Frag öpper: wie hend si d Fabi kennegleert?",
-  "Gang zu jemandem alleige stoht und frag ihn/sie öb er/sie sich zu öich setzt.",
-  "Find öpper mit em gliche Beruf wie du (oder emene ähnliche) und tuuscht öi us."
+  {cat:"Kennelerne", t:"Mach es Foti zäme mit de Fabi und öpperem, won du hüt na nöd kennsch."},
+  {cat:"Kennelerne", t:"Gang zur gröschte Person im Ruum und frag sie nach ihrer gröschte Angscht."},
+  {cat:"Kennelerne", t:"Gang zum jüngschte Mensch im Ruum und frag ihn/sie um en Lebens-Ratschlag."},
+  {cat:"Kennelerne", t:"Find öpper mit em gliche Vorname-Aafangsbuechstabe wie du und stellt enand vor."},
+  {cat:"Kennelerne", t:"Frag d Person näbet dir: was isch ihres Liebligs-Ässe?"},
+  {cat:"Kennelerne", t:"Find drü Lüt, wo au scho i Südamerika gsi sind, und tuuscht en Reise-Tipp us."},
+  {cat:"Kennelerne", t:"Frag di nöchscht Person: was isch ihres bäschte Fabi-Erlebnis?"},
+  {cat:"Kennelerne", t:"Mach es Gruppe-Foti mit mindeschtens 4 Lüt, wo du no nöd all kennsch."},
+  {cat:"Kennelerne", t:"Gang zur Person mit de dunkelschte Hoor und frag sie, was ihre Liebligs-Song grad isch."},
+  {cat:"Kennelerne", t:"Frag d Person näbet dir, was ihres Liebligs-Reiseziel wär und firum."},
+  {cat:"Kennelerne", t:"Gang zu öpperem, won du hüt na nöd gredet hesch, und stellt enand vor."},
+  {cat:"Kennelerne", t:"Frag 2 Lüt, was si am meischte a de Fabi schätze."},
+  {cat:"Kennelerne", t:"Mach es Foti mit em am bescht aagleite Gascht am Fäscht."},
+  {cat:"Kennelerne", t:"Find öpper, wo am glichen Ort wohnt wie du, und redet churz drüber."},
+  {cat:"Kennelerne", t:"Frag öpper Fremdes: was für en Beruf hät er/sie und was gfallt ihm/ihre draa."},
+  {cat:"Kennelerne", t:"Tuusch mit öpperem, won du nöd kennsch, e Handynummere us — für spätri Znacht-Ide."},
+  {cat:"Kennelerne", t:"Find d Person, wo hüt am wittischte häre greist isch fürs Fäscht."},
+  {cat:"Kennelerne", t:"Frag öpper: wie hend si d Fabi kennegleert?"},
+  {cat:"Kennelerne", t:"Gang zu jemandem alleige stoht und frag ihn/sie öb er/sie sich zu öich setzt."},
+  {cat:"Kennelerne", t:"Find öpper mit em gliche Beruf wie du (oder emene ähnliche) und tuuscht öi us."},
+  {cat:"Stimmig-Boost", t:"Alli wo hüt öppis Pinks a hend, müend jetzt 10 Sekunde tanze! 💃"},
+  {cat:"Stimmig-Boost", t:"Wer scho emal uf Mallorca gsi isch, muess jetzt luut 'BALLERMAAAANN!' rüefe."},
+  {cat:"Stimmig-Boost", t:"Alli klatsched jetzt 5 Sekunde im Takt vom nächschte Lied mit."},
+  {cat:"Stimmig-Boost", t:"Gruppe-Umarmig! Schnappd öi die 5 nöchschte Lüt und drückt enand churz."},
+  {cat:"Stimmig-Boost", t:"Alli hebed ihres Glas und stossed mit 3 Fremde a. Prost! 🥂"},
+  {cat:"Stimmig-Boost", t:"Wer als Letschti luut 'ZABKA!' schreit, muess en Schluck näh. 3-2-1-los!"},
+  {cat:"Stimmig-Boost", t:"Find en Tanzpartner und macht 15 Sekunde die lächerlichscht mögliche Tanzmove."},
+  {cat:"Stimmig-Boost", t:"Alli wo scho emal en Sonnenufgang wach erläbt hend, klatsched jetzt eimal luut."},
+  {cat:"Stimmig-Boost", t:"Bild e Konga-Linie mit mindeschtens 5 Lüt und tanzed eimal dur de Ruum."},
+  {cat:"Stimmig-Boost", t:"Wer hüt am meischte gspannt isch uf Fabis Gschänk-Reveal, schreit jetzt 'ROADTRIP!'"}
 ];
 
 let lastIdx = -1;
@@ -68,7 +78,10 @@ document.getElementById('draw-btn').onclick = () => {
   let idx;
   do { idx = Math.floor(Math.random()*TASKS.length); } while(idx === lastIdx && TASKS.length>1);
   lastIdx = idx;
-  document.getElementById('task-card').innerHTML = `<div>${TASKS[idx]}</div>`;
+  const task = TASKS[idx];
+  const isBoost = task.cat === 'Stimmig-Boost';
+  document.getElementById('task-card').innerHTML =
+    `<div><span class="group-tag">${isBoost ? '🔥 ' : '🤝 '}${task.cat}</span>${task.t}</div>`;
 };
 </script>
 </body>

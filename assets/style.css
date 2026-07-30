@@ -94,7 +94,7 @@ input[type=date]:focus{outline:none; border-color:var(--leaf);}
 .nav-card .txt h3{margin:0 0 2px; color:var(--ink);}
 .nav-card .txt p{margin:0; font-size:13px;}
 .gallery{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-.gallery img{width:100%; height:160px; object-fit:cover; border-radius:16px; background:#E3F5E9;}
+.gallery img{width:100%; aspect-ratio:1/1; height:auto; object-fit:cover; border-radius:16px; background:#E3F5E9;}
 .quote-card{
   background:var(--card); border-radius:20px; padding:20px 22px; margin-bottom:14px;
   border-left:5px solid var(--pink); font-size:16px; font-weight:600; font-style:italic;
@@ -142,7 +142,7 @@ header.top a{font-size:13px; color:var(--leaf-d); text-decoration:none; font-wei
 
 /* Slideshow */
 .slideshow{position:relative; border-radius:20px; overflow:hidden; margin-bottom:16px; aspect-ratio:4/3; background:#E3F5E9;}
-.slideshow img{width:100%; height:100%; object-fit:cover; display:none;}
+.slideshow img{width:100%; height:100%; object-fit:contain; background:#123024; display:none;}
 .slideshow img.active{display:block;}
 .slideshow .dots{position:absolute; bottom:10px; left:0; right:0; display:flex; justify-content:center; gap:6px;}
 .slideshow .dot{width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.6); cursor:pointer;}
@@ -155,6 +155,5 @@ header.top a{font-size:13px; color:var(--leaf-d); text-decoration:none; font-wei
   h1{font-size:23px;}
   .card{padding:24px 18px; border-radius:22px;}
   .gallery{grid-template-columns:1fr 1fr; gap:8px;}
-  .gallery img{height:130px;}
   .btn{width:100%; text-align:center; padding:15px 20px;}
 }
