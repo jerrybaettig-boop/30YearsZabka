@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dis perfekte Trip</title>
+<title>Din perfekte Trip</title>
 <link rel="stylesheet" href="../assets/style.css">
 <style>
 @media print{
@@ -12,8 +12,12 @@
   html, body{background:#fff; height:auto !important; min-height:0 !important;}
   .wrap{padding:0 !important; max-width:100% !important;}
   .card{box-shadow:none; border:none; padding:0 !important; margin:0 !important; page-break-inside:avoid;}
+  .dest-photo{max-height:110px !important;}
+  .voucher-photo{width:90px !important; height:90px !important; margin-top:8px !important;}
+  .emoji-big{font-size:32px !important; margin-bottom:0 !important;}
 }
-.voucher-photo{width:100px; height:100px; border-radius:50%; object-fit:cover; border:4px solid var(--leaf); margin:0 auto 14px; display:block;}
+.voucher-photo{width:140px; height:140px; border-radius:50%; object-fit:cover; border:4px solid var(--leaf); margin:14px auto 0; display:block;}
+.dest-photo{width:100%; max-height:170px; object-fit:cover; border-radius:14px; margin-bottom:14px; display:block;}
 .locked-box{border:2px solid #E3F5E9; border-radius:16px; padding:16px; margin-top:16px;}
 .locked-box input{width:100%; padding:12px 14px; border-radius:12px; border:2px solid #E3F5E9; font-family:'Quicksand',sans-serif; font-size:15px; margin-bottom:10px;}
 </style>
@@ -70,9 +74,9 @@ const QUESTIONS = [
     {t:'Gediegen, aber kei 3-Stärne', budget:2, culture:2}
   ]},
   {q:'Was macht di meh a?', type:'text', opts:[
-    {t:'Techno-Festival-Lineup dörefahnde', party:2},
+    {t:'Techno-Festival oder Club wär cool!', party:2},
     {t:'Lesecafé mit Usblick', party:-2, nature:1},
-    {t:'Ineme Bar hocke und Lüt zueluege', party:-1, culture:1}
+    {t:'Inere Bar höckle und Geierä', party:-1, culture:1}
   ]},
   {q:'Koffer isch bi dir ja immer scho 3 Wuche vorher packt — was packsch zerscht:', type:'image', opts:[
     {t:'Wanderschueh', img:'../images/quiz-wandern.jpg', nature:2},
@@ -85,16 +89,16 @@ const QUESTIONS = [
     {t:'2000 wie am Choquequirao, bring it on', nature:3}
   ]},
   {q:'Nacheme N1-Dienst (12-Stünder) bruuchsch du…', type:'text', opts:[
-    {t:'Rueih und Natur pur', nature:2},
+    {t:'Ruhe und Natuur', nature:2},
     {t:'Usgang, Chopf freitanze', party:2},
     {t:'Ufruume und Ornig schaffe', party:-2}
   ]},
-  {q:"Wenn's im Hotel achunsch, zerscht mal…", type:'image', opts:[
+  {q:"Wennt im Hotel ahchunsch, denn zersch…", type:'image', opts:[
     {t:'Koffer uspacke', img:'../images/quiz-ordnung.jpg'},
     {t:'Sofort use, go erkunde und entdecke', img:'../images/quiz-erkunden.jpg', culture:1},
     {t:'Shoppe', img:'../images/quiz-shoppen.jpg', culture:2}
   ]},
-  {q:'Es Ort mit Kakerlake-Risiko isch für di...', type:'text', opts:[
+  {q:'En Ort mit Risiko uf Kakerlake isch für dich...', type:'text', opts:[
     {t:'No-Go, sofort s Hotel wächsle', budget:1},
     {t:'Uszhalte, so lang de Räscht stimmt'},
     {t:'Dänn chasch ellei gah 😏'}
@@ -128,7 +132,7 @@ const QUESTIONS = [
     {t:'Authentisch und bodeständig, Zelt langt', budget:-1},
     {t:'Guet aber gmüetlich', budget:1}
   ]},
-  {q:'20 km z Fuess — lieber durab...', type:'image', opts:[
+  {q:'20km zFuess machsch lieber im/ide...', type:'image', opts:[
     {t:'Wald und Berge', img:'../images/quiz-natur.jpg', nature:3},
     {t:'Strasse und Shops ere Grossstadt', img:'../images/quiz-stadt.jpg', culture:2},
     {t:'Am Strand entlang', img:'../images/quiz-beach.jpg', coastal:3},
@@ -139,7 +143,7 @@ const QUESTIONS = [
     {t:'Tromsø: Rueih, Landschaft, Chelti', nature:3, warmth:-2},
     {t:'Athen: Stadt-Flair und Gschicht', culture:3}
   ]},
-  {q:'Was killt d Reis-Luune garantiert?', type:'text', opts:[
+  {q:'Was killt dini Reiseluune mit Garantie?', type:'text', opts:[
     {t:'Umenandsitze, nüt erläbe', nature:1, culture:1},
     {t:'Kakerlake im Zimmer'},
     {t:'Nüt, so lang min Chnobli debi isch 🐸💚', companion:1}
@@ -147,7 +151,7 @@ const QUESTIONS = [
   {q:"Wenn d Reis es Motto hätt, wär's...", type:'image', opts:[
     {t:'Chaos, wo am Schluss doch klappt', img:'../images/quiz-abenteuer.jpg', nature:2},
     {t:'Sunne, Meer, nüt tue', img:'../images/quiz-sonne.jpg', warmth:2, budget:1, coastal:2},
-    {t:'Mitm Flitzer durab d City düse', img:'../images/quiz-city.jpg', culture:2},
+    {t:'Durch die City cruisen', img:'../images/quiz-city.jpg', culture:2},
     {t:'Alles gliich schön für mi 🤷', img:'../images/quiz-alles-super.jpg'}
   ]},
 ];
@@ -161,7 +165,7 @@ let state = {
   season: '',
   top2: [],
   chosen: null,
-  dates: {wish:{from:'',to:''}, alt1:{from:'',to:''}, alt2:{from:'',to:''}, notPlannable:false}
+  dates: {wish:{from:'',to:''}, alt1:{from:'',to:''}, alt2:{from:'',to:''}, notPlannable:false, showAlt:false}
 };
 
 function saveProgress(){
@@ -242,7 +246,7 @@ function render(){
 function renderIntro(){
   return `
     <div class="emoji-big">🧳🐸</div>
-    <h1 style="text-align:center">Dis perfekte Trip wartet</h1>
+    <h1 style="text-align:center">Din perfekte Trip wartet uf dich</h1>
     <p style="text-align:center">20 Frage, vili dervo typisch du. Am Schluss weiss d App genau, wohin d Reis goht — du entscheidsch de Räscht.</p>
     <div class="center"><button class="btn" id="start">Los goht's</button></div>
   `;
@@ -287,38 +291,59 @@ function renderReveal(){
 
 function renderDates(){
   const np = state.dates.notPlannable;
+  const showAlt = state.dates.showAlt;
   return `
     <div class="tag">Fascht gschafft</div>
     <h2>Wenn söll's losgoh?</h2>
-    <p>Gib es verlängerts Wuchenänd als Wunschtermin a, plus zwei Alternative.</p>
+    <p>Gib es verlängerts Wuchenänd als Wunschtermin a. Alternative sind optional.</p>
     <div class="field"><label>🌟 Wunschtermin</label><div class="daterow">
       <input type="date" id="wish-from" value="${state.dates.wish.from}" ${np?'disabled':''}><input type="date" id="wish-to" value="${state.dates.wish.to}" ${np?'disabled':''}></div></div>
-    <div class="field"><label>Alternative 1</label><div class="daterow">
-      <input type="date" id="alt1-from" value="${state.dates.alt1.from}" ${np?'disabled':''}><input type="date" id="alt1-to" value="${state.dates.alt1.to}" ${np?'disabled':''}></div></div>
-    <div class="field"><label>Alternative 2</label><div class="daterow">
-      <input type="date" id="alt2-from" value="${state.dates.alt2.from}" ${np?'disabled':''}><input type="date" id="alt2-to" value="${state.dates.alt2.to}" ${np?'disabled':''}></div></div>
+
+    <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; margin-bottom:14px; cursor:pointer">
+      <input type="checkbox" id="show-alt" ${showAlt?'checked':''} style="width:18px; height:18px;" ${np?'disabled':''}>
+      Ich möcht no Alternativtermin agäh (optional)
+    </label>
+
+    <div id="alt-fields" style="display:${showAlt && !np ? 'block':'none'}">
+      <div class="field"><label>Alternative 1</label><div class="daterow">
+        <input type="date" id="alt1-from" value="${state.dates.alt1.from}"><input type="date" id="alt1-to" value="${state.dates.alt1.to}"></div></div>
+      <div class="field"><label>Alternative 2</label><div class="daterow">
+        <input type="date" id="alt2-from" value="${state.dates.alt2.from}"><input type="date" id="alt2-to" value="${state.dates.alt2.to}"></div></div>
+    </div>
+
     <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; margin-bottom:10px; cursor:pointer">
       <input type="checkbox" id="not-plannable" ${np?'checked':''} style="width:18px; height:18px;">
       Momentan nöd planbar (Schichtplan fehlt), gib ich bald durab
     </label>
-    <p class="small" id="date-error" style="color:var(--pink-d); display:none">Bitte alli drü Termin agäh oder s Kästli aachrüze.</p>
+    <p class="small" id="date-error" style="color:var(--pink-d); display:none">Bitte de Wunschtermin agäh oder s Kästli aachrüze.</p>
     <div class="center" style="margin-top:14px"><button class="btn" id="submit-dates">Spichere und abschicke</button></div>
   `;
 }
 
 function renderVoucher(){
   const d = state.chosen;
+  const dt = state.dates;
+  let dateBlock;
+  if(dt.notPlannable){
+    dateBlock = `<p style="text-align:center; margin-bottom:16px;">Termin folgt sobald de Schichtplan da isch</p>`;
+  } else {
+    let lines = `<b>Wunschtermin:</b> ${dt.wish.from} bis ${dt.wish.to}`;
+    if(dt.alt1.from && dt.alt1.to) lines += `<br><b>Alternative 1:</b> ${dt.alt1.from} bis ${dt.alt1.to}`;
+    if(dt.alt2.from && dt.alt2.to) lines += `<br><b>Alternative 2:</b> ${dt.alt2.from} bis ${dt.alt2.to}`;
+    dateBlock = `<p style="text-align:center; margin-bottom:16px; line-height:1.6;">${lines}</p>`;
+  }
   return `
     <div class="emoji-big">🎁</div>
-    <h1 style="text-align:center">Dis Gschänk-Gutschii</h1>
-    <img src="../images/jerry-photo.jpg" class="voucher-photo" alt="Jerry" onerror="this.style.display='none'">
+    <h1 style="text-align:center">Din Gschänk-Guetschi</h1>
     <div class="card" style="background:#F7FCF8; box-shadow:none; border:2px dashed var(--leaf);">
+      <img src="../images/dest-${d?d.id:''}.jpg" alt="${d?d.name:''}" class="dest-photo" onerror="this.style.display='none'">
       <p style="text-align:center; font-size:18px; font-weight:800; color:var(--leaf-d); margin-bottom:4px;">Citytrip nach ${d?d.name:''}, ${d?d.land:''}</p>
-      <p style="text-align:center; margin-bottom:16px;">${state.dates.notPlannable ? 'Termin folgt sobald de Schichtplan da isch' : (state.dates.wish.from+' bis '+state.dates.wish.to)}</p>
+      ${dateBlock}
       <div class="divider"></div>
       <p style="font-style:italic; text-align:center;">"Hey Zabka ♥<br><br>
-      Es git kei bessers Gschänk als dich! Und damit ich möglichst viel vo dir ha, würd ich dir gern e tolli Reis zu dinere usgwählte Destination organisiere und schänke. Alles was du muesch mache isch so bliibe we du bisch und din Lebensfreud und dis herzliche Lache nie verlüre!<br><br>
+      Es git kei bessers Gschänk als dich! Und damit ich möglichst viel vo dir ha, würd ich dir gern e tolli Reis zu dinere usgwählte Destination organisiere und schänke. Alles was du muesch mache isch so bliibe we du bisch und dini Lebensfreud und dis herzliche Lache nie verlüre!<br><br>
       Love you und freu mich uf üsen Trip,<br>din Chnöbi"</p>
+      <img src="../images/jerry-photo.jpg" class="voucher-photo" alt="Jerry" onerror="this.style.display='none'">
     </div>
     <div class="center" style="margin-top:20px">
       <button class="btn" id="print-btn">Als PDF spichere</button>
@@ -364,22 +389,46 @@ function attachEvents(){
     };
   }
 
+  const showAltBox = document.getElementById('show-alt');
+  if(showAltBox){
+    showAltBox.onchange = () => {
+      state.dates.showAlt = showAltBox.checked;
+      render();
+    };
+  }
+
+  // Auto-fill "bis" mit +3 Tag (verlängerts Wuchenänd), wenn "von" gsetzt wird
+  [['wish-from','wish-to'],['alt1-from','alt1-to'],['alt2-from','alt2-to']].forEach(([fromId,toId])=>{
+    const fromEl = document.getElementById(fromId);
+    const toEl = document.getElementById(toId);
+    if(fromEl && toEl){
+      fromEl.onchange = () => {
+        if(fromEl.value && !toEl.value){
+          const d = new Date(fromEl.value);
+          d.setDate(d.getDate()+3);
+          toEl.value = d.toISOString().slice(0,10);
+        }
+      };
+    }
+  });
+
   const submitDates = document.getElementById('submit-dates');
   if(submitDates){
     submitDates.onclick = async () => {
       const np = document.getElementById('not-plannable').checked;
       state.dates.notPlannable = np;
+      state.dates.showAlt = document.getElementById('show-alt') ? document.getElementById('show-alt').checked : false;
       if(!np){
         state.dates.wish.from = document.getElementById('wish-from').value;
         state.dates.wish.to = document.getElementById('wish-to').value;
-        state.dates.alt1.from = document.getElementById('alt1-from').value;
-        state.dates.alt1.to = document.getElementById('alt1-to').value;
-        state.dates.alt2.from = document.getElementById('alt2-from').value;
-        state.dates.alt2.to = document.getElementById('alt2-to').value;
-        const allFilled = state.dates.wish.from && state.dates.wish.to &&
-                           state.dates.alt1.from && state.dates.alt1.to &&
-                           state.dates.alt2.from && state.dates.alt2.to;
-        if(!allFilled){
+        if(document.getElementById('alt1-from')){
+          state.dates.alt1.from = document.getElementById('alt1-from').value;
+          state.dates.alt1.to = document.getElementById('alt1-to').value;
+          state.dates.alt2.from = document.getElementById('alt2-from').value;
+          state.dates.alt2.to = document.getElementById('alt2-to').value;
+        }
+        const wishFilled = state.dates.wish.from && state.dates.wish.to;
+        if(!wishFilled){
           document.getElementById('date-error').style.display = 'block';
           return;
         }
