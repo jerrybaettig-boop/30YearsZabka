@@ -23,9 +23,22 @@ body{overscroll-behavior:none;}
 .title-compact p{margin:0; font-size:13px;}
 
 .fs-btn{display:block; margin:10px auto 0; width:fit-content;}
-.game-shell:fullscreen{width:100vw; height:100vh; border-radius:0; display:flex; align-items:center; justify-content:center; background:#000;}
-.game-shell:-webkit-full-screen{width:100vw; height:100vh; border-radius:0; display:flex; align-items:center; justify-content:center; background:#000;}
-.game-shell:fullscreen #gameCanvas, .game-shell:-webkit-full-screen #gameCanvas{width:auto !important; height:100vh !important; max-width:100vw;}
+.game-shell:fullscreen, .game-shell:-webkit-full-screen{
+  width:100vw; height:100vh; border-radius:0; background:#0f2d1e;
+  display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+  padding:10px 0;
+}
+.fs-chrome{display:none;}
+.game-shell:fullscreen .fs-chrome, .game-shell:-webkit-full-screen .fs-chrome{
+  display:flex; align-items:center; justify-content:center; gap:10px; flex-shrink:0;
+  color:#EAF7EC; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px;
+}
+.fs-chrome img{height:34px; width:34px; border-radius:50%; object-fit:cover; border:2px solid #6FCF97;}
+.fs-chrome a{color:#EAF7EC; text-decoration:none; font-size:20px; opacity:0.85;}
+.game-shell:fullscreen #gameCanvas, .game-shell:-webkit-full-screen #gameCanvas{
+  width:auto !important; height:auto !important; max-width:96vw; max-height:calc(100vh - 100px);
+  flex:0 1 auto; border-radius:12px;
+}
 </style>
 </head>
 <body>
@@ -41,12 +54,20 @@ body{overscroll-behavior:none;}
 
   <div class="game-hud"><span id="score-display">🛍️ 0</span><span id="highscore-display">Rekord: 0</span></div>
   <div class="game-shell">
+  <div class="fs-chrome">🐸 Zabka-Fäscht</div>
     <canvas id="gameCanvas" width="380" height="640"></canvas>
     <div class="game-overlay" id="overlay">
       <h2>Bereit zum Staple?</h2>
       <p>De Block bewegt sich hin und här — tipp zum Abelah. Trifft er nöd genau, wird de Turm schmaler.</p>
       <button class="btn" id="start-btn">Los goht's</button>
     </div>
+  <div class="fs-chrome">
+      <a href="index.html" title="Zum Menü">🏠</a>
+      <img src="images/fabi-sticker.png" alt="Fabi" onerror="this.style.display='none'">
+      <a href="frosch-game.html" title="Kakerlake">🪳</a>
+      <a href="spritzen-game.html" title="Keime">💉</a>
+      <a href="operation-game.html" title="Shopping">🛍️</a>
+  </div>
   </div>
   <button class="btn secondary fs-btn" id="fs-btn">⛶ Vollbildmodus</button>
 </div>
@@ -95,9 +116,9 @@ function spawnNext(){
   const top = stack[stack.length-1];
   current = {
     x: Math.random()<0.5 ? -160 : W+20,
-    w: top.w,
+    w: Math.max(top.w, 34),
     dir: Math.random()<0.5 ? 1 : -1,
-    speed: Math.min(2.2 + score*0.09, 6.5),
+    speed: Math.min(2.0 + score*0.065, 5.2),
     icon: ICONS[stack.length % ICONS.length]
   };
   if(current.x < 0) current.dir = 1; else current.dir = -1;
@@ -110,7 +131,7 @@ function drop(){
   const overlapEnd = Math.min(top.x+top.w, current.x+current.w);
   const overlapW = overlapEnd - overlapStart;
 
-  if(overlapW <= 4){
+  if(overlapW <= 2){
     startFail();
     return;
   }
@@ -208,8 +229,7 @@ function startGame(){
 }
 
 startBtn.onclick = startGame;
-canvas.addEventListener('pointerdown', drop);
-canvas.addEventListener('touchstart', e => { drop(); e.preventDefault(); }, {passive:false});
+canvas.addEventListener('pointerdown', e => { drop(); e.preventDefault(); });
 document.addEventListener('keydown', e => { if(e.key===' '){ drop(); e.preventDefault(); } });
 </script>
 </body>

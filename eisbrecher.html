@@ -70,7 +70,13 @@ const TASKS = [
   {cat:"Stimmig-Boost", t:"Find en Tanzpartner und macht 15 Sekunde die lächerlichscht mögliche Tanzmove."},
   {cat:"Stimmig-Boost", t:"Alli wo scho emal en Sonnenufgang wach erläbt hend, klatsched jetzt eimal luut."},
   {cat:"Stimmig-Boost", t:"Bild e Konga-Linie mit mindeschtens 5 Lüt und tanzed eimal dur de Ruum."},
-  {cat:"Stimmig-Boost", t:"Wer hüt am meischte gspannt isch uf Fabis Gschänk-Reveal, schreit jetzt 'ROADTRIP!'"}
+  {cat:"Stimmig-Boost", t:"Wer hüt am meischte gspannt isch uf Fabis Gschänk-Reveal, schreit jetzt 'ROADTRIP!'"},
+  {cat:"Foto & Gäme", t:"Mach es Foti mit de Fabi und öpperem Neue, und lad's direkt ufs Memory-Board: <a href='https://padlet.com/jerrybaettig/fabi-memory-board-v1vvqu64s8zwareu' target='_blank'>Board öffne</a>"},
+  {cat:"Foto & Gäme", t:"Sammlet euch zu 4 für en spontane Gruppe-Schnappschuss — ab uf: <a href='https://padlet.com/jerrybaettig/fabi-memory-board-v1vvqu64s8zwareu' target='_blank'>Fotowand</a>"},
+  {cat:"Foto & Gäme", t:"Challenge: schaffsch 30 Tüte im Stapel-Gäme? <a href='operation-game.html' target='_blank'>Jetzt spile</a> — klappt's, gib d Challenge witer a jemert anders!"},
+  {cat:"Foto & Gäme", t:"Wie lang überläbsch bide Kakerlake? <a href='frosch-game.html' target='_blank'>Zabka vs. Kakerlake</a> — schaffsch 30 Frösch?"},
+  {cat:"Foto & Gäme", t:"ICU-Alarm: <a href='spritzen-game.html' target='_blank'>Sprütze gege Keime</a> — bis wele Level chunnsch in 3 Minute?"},
+  {cat:"Foto & Gäme", t:"Pack Jasskarte oder es anders Kartespiel us und spilt zu 3-4 e churzi Runde."}
 ];
 
 let lastIdx = -1;
@@ -79,9 +85,10 @@ document.getElementById('draw-btn').onclick = () => {
   do { idx = Math.floor(Math.random()*TASKS.length); } while(idx === lastIdx && TASKS.length>1);
   lastIdx = idx;
   const task = TASKS[idx];
-  const isBoost = task.cat === 'Stimmig-Boost';
+  const icons = {"Stimmig-Boost":"🔥", "Foto & Gäme":"📸"};
+  const icon = icons[task.cat] || "🤝";
   document.getElementById('task-card').innerHTML =
-    `<div><span class="group-tag">${isBoost ? '🔥 ' : '🤝 '}${task.cat}</span>${task.t}</div>`;
+    `<div><span class="group-tag">${icon} ${task.cat}</span>${task.t}</div>`;
 };
 </script>
 </body>

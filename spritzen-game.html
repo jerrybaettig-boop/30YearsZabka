@@ -34,9 +34,22 @@ body{overscroll-behavior:none;}
 .perk-legend span{background:#F7FCF8; border:1px solid #E3F5E9; border-radius:10px; padding:4px 8px;}
 
 .fs-btn{display:block; margin:10px auto 0; width:fit-content;}
-.game-shell:fullscreen{width:100vw; height:100vh; border-radius:0; display:flex; align-items:center; justify-content:center; background:#000;}
-.game-shell:-webkit-full-screen{width:100vw; height:100vh; border-radius:0; display:flex; align-items:center; justify-content:center; background:#000;}
-.game-shell:fullscreen #gameCanvas, .game-shell:-webkit-full-screen #gameCanvas{width:auto !important; height:100vh !important; max-width:100vw;}
+.game-shell:fullscreen, .game-shell:-webkit-full-screen{
+  width:100vw; height:100vh; border-radius:0; background:#0f2d1e;
+  display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+  padding:10px 0;
+}
+.fs-chrome{display:none;}
+.game-shell:fullscreen .fs-chrome, .game-shell:-webkit-full-screen .fs-chrome{
+  display:flex; align-items:center; justify-content:center; gap:10px; flex-shrink:0;
+  color:#EAF7EC; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:14px;
+}
+.fs-chrome img{height:34px; width:34px; border-radius:50%; object-fit:cover; border:2px solid #6FCF97;}
+.fs-chrome a{color:#EAF7EC; text-decoration:none; font-size:20px; opacity:0.85;}
+.game-shell:fullscreen #gameCanvas, .game-shell:-webkit-full-screen #gameCanvas{
+  width:auto !important; height:auto !important; max-width:96vw; max-height:calc(100vh - 100px);
+  flex:0 1 auto; border-radius:12px;
+}
 </style>
 </head>
 <body>
@@ -57,6 +70,7 @@ body{overscroll-behavior:none;}
   </div>
   <div class="boss-bar-wrap" id="boss-bar-wrap"><div class="boss-bar" id="boss-bar" style="width:100%"></div></div>
   <div class="game-shell">
+  <div class="fs-chrome">🐸 Zabka-Fäscht</div>
     <canvas id="gameCanvas" width="380" height="680"></canvas>
     <div class="toast" id="toast"></div>
     <div class="game-overlay" id="overlay">
@@ -64,6 +78,13 @@ body{overscroll-behavior:none;}
       <p>Finger uf de Canvas leg und halte zum Duregschosse. Alli 8 Keim chunnt en Endboss.</p>
       <button class="btn" id="start-btn">Schicht start</button>
     </div>
+  <div class="fs-chrome">
+      <a href="index.html" title="Zum Menü">🏠</a>
+      <img src="images/fabi-sticker.png" alt="Fabi" onerror="this.style.display='none'">
+      <a href="frosch-game.html" title="Kakerlake">🪳</a>
+      <a href="spritzen-game.html" title="Keime">💉</a>
+      <a href="operation-game.html" title="Shopping">🛍️</a>
+  </div>
   </div>
   <div class="perk-legend">
     <span>🔴 Laser-Strahl</span>
@@ -183,17 +204,28 @@ function spawnPerkItem(){
   perkItems.push({x, y:-r, r, type: randomPerkType()});
 }
 
-function makeBoss(name, emoji, hp, x, stage){
-  return {x, y: 90, r: stage===1?42:30, hp, maxHp:hp, name, emoji,
-    vx: (stage===1?1.6:2.3) + level*0.05, dir: Math.random()<0.5?-1:1,
-    lastAttack:0, attackInterval: Math.max((stage===1?1200:900) - level*28, 420), stage};
+function bossConfigForLevel(lv){
+  // Progressive Schwierigkeit: erst einfach, dann eigeni Tücke pro Abschnitt
+  if(lv <= 5)  return {canSplit:false, speedMult:1.0, attackMult:1.0, hpMult:1.0};
+  if(lv <= 12) return {canSplit:false, speedMult:1.15, attackMult:0.8, hpMult:1.1};
+  if(lv <= 20) return {canSplit:true,  speedMult:1.0, attackMult:1.0, hpMult:0.9};
+  return           {canSplit:true,  speedMult:1.3, attackMult:0.75, hpMult:1.15};
+}
+
+function makeBoss(name, emoji, hp, x, stage, cfg){
+  cfg = cfg || {speedMult:1, attackMult:1};
+  return {x, y: 90, r: stage===1?42:30, hp, maxHp:hp, name, emoji, stage,
+    vx: ((stage===1?1.6:2.3) + level*0.05) * cfg.speedMult, dir: Math.random()<0.5?-1:1,
+    lastAttack:0, attackInterval: Math.max((stage===1?1200:900) - level*28, 420) * cfg.attackMult,
+    canSplit: cfg.canSplit, wobble: Math.random()*Math.PI*2};
 }
 
 function spawnBoss(){
   const name = BOSS_NAMES[Math.min(level-1, BOSS_NAMES.length-1)];
   const emoji = BOSS_EMOJIS[(level-1) % BOSS_EMOJIS.length];
-  const hp = 8 + Math.floor(level*1.6);
-  bosses = [makeBoss(name, emoji, hp, W/2, 1)];
+  const cfg = bossConfigForLevel(level);
+  const hp = Math.round((5 + level*1.3) * cfg.hpMult);
+  bosses = [makeBoss(name, emoji, hp, W/2, 1, cfg)];
   bossBarWrap.style.display = 'block';
   updateBossBar();
   showToast('⚠️ Endboss: ' + name + '!', 2200);
@@ -339,13 +371,14 @@ function update(dt){
     if(bo.hp <= 0){
       bossesChanged = true;
       score += bo.stage===1 ? 5 : 3;
-      if(bo.stage === 1){
+      if(bo.stage === 1 && bo.canSplit){
         showToast('💥 ' + bo.name + ' teilt sich!', 1400);
         const childHp = Math.max(2, Math.ceil(bo.maxHp*0.45));
-        newBosses.push(makeBoss(bo.name, bo.emoji, childHp, Math.max(bo.r+20, bo.x-40), 2));
-        newBosses.push(makeBoss(bo.name, bo.emoji, childHp, Math.min(W-bo.r-20, bo.x+40), 2));
+        const cfg = bossConfigForLevel(level);
+        newBosses.push(makeBoss(bo.name, bo.emoji, childHp, Math.max(bo.r+20, bo.x-40), 2, cfg));
+        newBosses.push(makeBoss(bo.name, bo.emoji, childHp, Math.min(W-bo.r-20, bo.x+40), 2, cfg));
       }
-      // stage 2 bosses just die
+      // andere Bosse (kei Split) sterbed eifach
     } else {
       newBosses.push(bo);
     }
@@ -410,9 +443,23 @@ function draw(){
   });
 
   bosses.forEach(bo=>{
+    const pulse = 1 + Math.sin(gameClock/220 + bo.wobble)*0.06;
+    const wob = Math.sin(gameClock/280 + bo.wobble)*0.12;
+    ctx.save();
+    ctx.translate(bo.x, bo.y);
+    ctx.rotate(wob);
+    ctx.scale(pulse, pulse);
+    ctx.shadowColor = 'rgba(198,40,40,0.55)';
+    ctx.shadowBlur = 18;
     ctx.font = (bo.stage===1?'58px':'40px')+' serif';
-    ctx.fillText(bo.emoji, bo.x, bo.y);
-    ctx.font = '600 9px Baloo 2, sans-serif';
+    ctx.fillText(bo.emoji, 0, 0);
+    ctx.restore();
+    // HP-Ring
+    const r = bo.stage===1?36:26;
+    ctx.beginPath();
+    ctx.arc(bo.x, bo.y, r, -Math.PI/2, -Math.PI/2 + Math.PI*2*Math.max(0,bo.hp/bo.maxHp));
+    ctx.strokeStyle = '#6FCF97'; ctx.lineWidth = 3; ctx.lineCap='round'; ctx.stroke();
+    ctx.font = '600 8px Baloo 2, sans-serif';
     ctx.fillStyle = '#c62828';
     ctx.fillText(bo.name, bo.x, bo.y - (bo.stage===1?50:38));
   });
@@ -490,13 +537,10 @@ function setTargetFromEvent(clientX){
   const scale = W / rect.width;
   player.targetX = (clientX - rect.left) * scale;
 }
-canvas.addEventListener('pointerdown', e => { if(state==='playing'){ setTargetFromEvent(e.clientX); isFiring = true; shootOnce(); } });
+canvas.addEventListener('pointerdown', e => { if(state==='playing'){ setTargetFromEvent(e.clientX); isFiring = true; shootOnce(); } e.preventDefault(); });
 canvas.addEventListener('pointerup', () => { isFiring = false; });
 canvas.addEventListener('pointerleave', () => { isFiring = false; });
 canvas.addEventListener('pointermove', e => { if(state==='playing') setTargetFromEvent(e.clientX); });
-canvas.addEventListener('touchstart', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientX); isFiring = true; shootOnce(); e.preventDefault(); } }, {passive:false});
-canvas.addEventListener('touchend', e => { isFiring = false; e.preventDefault(); }, {passive:false});
-canvas.addEventListener('touchmove', e => { if(state==='playing'){ setTargetFromEvent(e.touches[0].clientX); e.preventDefault(); } }, {passive:false});
 document.addEventListener('keydown', e => {
   if(state!=='playing') return;
   if(e.key === 'ArrowLeft') player.targetX -= 30;
