@@ -46,6 +46,8 @@ body{overscroll-behavior:none;}
 }
 .fs-chrome img{height:34px; width:34px; border-radius:50%; object-fit:cover; border:2px solid #6FCF97;}
 .fs-chrome a{color:#EAF7EC; text-decoration:none; font-size:20px; opacity:0.85;}
+.game-shell:fullscreen .game-hud, .game-shell:-webkit-full-screen .game-hud{color:#EAF7EC; width:100%; max-width:480px; padding:0 10px;}
+.game-shell:fullscreen .boss-bar-wrap, .game-shell:-webkit-full-screen .boss-bar-wrap{width:100%; max-width:480px; background:rgba(255,255,255,0.15);}
 .game-shell:fullscreen #gameCanvas, .game-shell:-webkit-full-screen #gameCanvas{
   width:auto !important; height:auto !important; max-width:96vw; max-height:calc(100vh - 100px);
   flex:0 1 auto; border-radius:12px;
@@ -63,14 +65,13 @@ body{overscroll-behavior:none;}
     <p>Zieh d Spritze hin und här, druck und halt zum Schüsse. 30 Level, jede mit Endboss! Es isch nid so eifach uf de ICU züberlebe!</p>
   </div>
 
+  <div class="game-shell">
   <div class="game-hud">
     <span id="score-display">💉 0</span>
     <span id="level-display">Level 1/30</span>
     <span id="lives-display">❤️❤️❤️</span>
   </div>
   <div class="boss-bar-wrap" id="boss-bar-wrap"><div class="boss-bar" id="boss-bar" style="width:100%"></div></div>
-  <div class="game-shell">
-  <div class="fs-chrome">🐸 Zabka-Fäscht</div>
     <canvas id="gameCanvas" width="380" height="680"></canvas>
     <div class="toast" id="toast"></div>
     <div class="game-overlay" id="overlay">
@@ -224,7 +225,7 @@ function spawnBoss(){
   const name = BOSS_NAMES[Math.min(level-1, BOSS_NAMES.length-1)];
   const emoji = BOSS_EMOJIS[(level-1) % BOSS_EMOJIS.length];
   const cfg = bossConfigForLevel(level);
-  const hp = Math.round((5 + level*1.3) * cfg.hpMult);
+  const hp = Math.round((6 + level*1.5) * cfg.hpMult);
   bosses = [makeBoss(name, emoji, hp, W/2, 1, cfg)];
   bossBarWrap.style.display = 'block';
   updateBossBar();

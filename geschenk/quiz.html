@@ -7,9 +7,11 @@
 <link rel="stylesheet" href="../assets/style.css">
 <style>
 @media print{
+  @page{ size:auto; margin:10mm; }
   .stickynav, .btn, .btn-row, .small{display:none !important;}
-  body{background:#fff;}
-  .card{box-shadow:none; border:none;}
+  html, body{background:#fff; height:auto !important; min-height:0 !important;}
+  .wrap{padding:0 !important; max-width:100% !important;}
+  .card{box-shadow:none; border:none; padding:0 !important; margin:0 !important; page-break-inside:avoid;}
 }
 .voucher-photo{width:100px; height:100px; border-radius:50%; object-fit:cover; border:4px solid var(--leaf); margin:0 auto 14px; display:block;}
 .locked-box{border:2px solid #E3F5E9; border-radius:16px; padding:16px; margin-top:16px;}
@@ -54,7 +56,8 @@ const QUESTIONS = [
   {q:'Wo ziehts dich am ehste ane für es paar Täg?', type:'image', opts:[
     {t:'Palme, Strand und Meer', img:'../images/quiz-strand.jpg', warmth:3, coastal:3},
     {t:'Berge, frischi Luft', img:'../images/quiz-berge.jpg', warmth:-2, nature:2},
-    {t:'Pulsierendi Grossstadt', img:'../images/quiz-stadt2.jpg', culture:2}
+    {t:'Pulsierendi Grossstadt', img:'../images/quiz-stadt2.jpg', culture:2},
+    {t:'Alles gliich schön für mi 🤷', img:'../images/quiz-alles-super.jpg'}
   ]},
   {q:'Wo wetsch din Abig verbringe?', type:'image', opts:[
     {t:'Cocktailbar mit Usblick', img:'../images/quiz-cocktail.jpg', party:2},
@@ -87,9 +90,9 @@ const QUESTIONS = [
     {t:'Ufruume und Ornig schaffe', party:-2}
   ]},
   {q:"Wenn's im Hotel achunsch, zerscht mal…", type:'image', opts:[
-    {t:'Koffer uspacke, aliräume', img:'../images/quiz-ordnung.jpg'},
+    {t:'Koffer uspacke', img:'../images/quiz-ordnung.jpg'},
     {t:'Sofort use, go erkunde und entdecke', img:'../images/quiz-erkunden.jpg', culture:1},
-    {t:'Shoppe', culture:2}
+    {t:'Shoppe', img:'../images/quiz-shoppen.jpg', culture:2}
   ]},
   {q:'Es Ort mit Kakerlake-Risiko isch für di...', type:'text', opts:[
     {t:'No-Go, sofort s Hotel wächsle', budget:1},
@@ -104,7 +107,8 @@ const QUESTIONS = [
   {q:'Wie wetsch dethi cho?', type:'text', opts:[
     {t:'Zug/Bus', culture:1},
     {t:'Flugi', budget:2},
-    {t:'Auto', budget:-1}
+    {t:'Auto', budget:-1},
+    {t:'Egal, Hauptsach mir chömed ah'}
   ]},
   {q:'Playlist fürs Roadtrip-Auto?', type:'image', opts:[
     {t:'Techno, bis de Bass wackelt', img:'../images/quiz-techno.jpg', party:2},
@@ -127,9 +131,10 @@ const QUESTIONS = [
   {q:'20 km z Fuess — lieber durab...', type:'image', opts:[
     {t:'Wald und Berge', img:'../images/quiz-natur.jpg', nature:3},
     {t:'Strasse und Shops ere Grossstadt', img:'../images/quiz-stadt.jpg', culture:2},
-    {t:'Am Strand entlang', img:'../images/quiz-beach.jpg', coastal:3}
+    {t:'Am Strand entlang', img:'../images/quiz-beach.jpg', coastal:3},
+    {t:'Alles gliich schön für mi 🤷', img:'../images/quiz-alles-super.jpg'}
   ]},
-  {q:'Dis bisherigs Reis-Highlight isch eher gsi wie...', type:'text', opts:[
+  {q:'Wennt chöntsch wähle, wär dini nächscht Reis am ehnschte wie...', type:'text', opts:[
     {t:'Peru/Kolumbie: Abentür und Kultur pur', culture:2, nature:2},
     {t:'Tromsø: Rueih, Landschaft, Chelti', nature:3, warmth:-2},
     {t:'Athen: Stadt-Flair und Gschicht', culture:3}
@@ -142,7 +147,8 @@ const QUESTIONS = [
   {q:"Wenn d Reis es Motto hätt, wär's...", type:'image', opts:[
     {t:'Chaos, wo am Schluss doch klappt', img:'../images/quiz-abenteuer.jpg', nature:2},
     {t:'Sunne, Meer, nüt tue', img:'../images/quiz-sonne.jpg', warmth:2, budget:1, coastal:2},
-    {t:'Mitm Flitzer durab d City düse', img:'../images/quiz-city.jpg', culture:2}
+    {t:'Mitm Flitzer durab d City düse', img:'../images/quiz-city.jpg', culture:2},
+    {t:'Alles gliich schön für mi 🤷', img:'../images/quiz-alles-super.jpg'}
   ]},
 ];
 
@@ -246,7 +252,7 @@ function renderQuestion(i){
   const q = QUESTIONS[i];
   const pct = Math.round((i/QUESTIONS.length)*100);
   const opts = q.type === 'image'
-    ? `<div class="img-grid" style="grid-template-columns:repeat(${q.opts.length}, 1fr)">${q.opts.map((o,idx)=>`
+    ? `<div class="img-grid">${q.opts.map((o,idx)=>`
         <button class="opt-img" data-i="${idx}">
           <img src="${o.img}" alt="${o.t}" onerror="this.style.display='none'">
           <div class="cap">${o.t}</div>
@@ -310,9 +316,9 @@ function renderVoucher(){
       <p style="text-align:center; font-size:18px; font-weight:800; color:var(--leaf-d); margin-bottom:4px;">Citytrip nach ${d?d.name:''}, ${d?d.land:''}</p>
       <p style="text-align:center; margin-bottom:16px;">${state.dates.notPlannable ? 'Termin folgt sobald de Schichtplan da isch' : (state.dates.wish.from+' bis '+state.dates.wish.to)}</p>
       <div class="divider"></div>
-      <p style="font-style:italic; text-align:center;">"Liebi Zabka 🐸<br><br>
-      Dr Chnobli freut sich riesig uf e tolli Reis mit sinere altä, aber na sehr knackige und tolle Zabka. Alles wird organisiert — packe muesch nur na dis Lächle. 💚<br><br>
-      In Liebi, dis Chnobli"</p>
+      <p style="font-style:italic; text-align:center;">"Hey Zabka ♥<br><br>
+      Es git kei bessers Gschänk als dich! Und damit ich möglichst viel vo dir ha, würd ich dir gern e tolli Reis zu dinere usgwählte Destination organisiere und schänke. Alles was du muesch mache isch so bliibe we du bisch und din Lebensfreud und dis herzliche Lache nie verlüre!<br><br>
+      Love you und freu mich uf üsen Trip,<br>din Chnöbi"</p>
     </div>
     <div class="center" style="margin-top:20px">
       <button class="btn" id="print-btn">Als PDF spichere</button>
