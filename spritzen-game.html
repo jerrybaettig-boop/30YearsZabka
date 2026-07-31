@@ -37,7 +37,7 @@ body{overscroll-behavior:none;}
 .game-shell:fullscreen, .game-shell:-webkit-full-screen{
   width:100vw; height:100vh; border-radius:0; background:#0f2d1e;
   display:flex; flex-direction:column; align-items:center; justify-content:space-between;
-  padding:10px 0;
+  padding:max(48px, env(safe-area-inset-top)) 0 max(20px, env(safe-area-inset-bottom));
 }
 .fs-chrome{display:none;}
 .game-shell:fullscreen .fs-chrome, .game-shell:-webkit-full-screen .fs-chrome{
@@ -178,11 +178,11 @@ function showToast(msg, ms){
 }
 
 function fallSpeed(){
-  let base = 1.5 + level*0.12 + elapsed*0.01;
+  let base = 1.2 + level*0.08 + elapsed*0.006;
   if(gameClock < perks.zitlupe) base *= 0.5;
-  return Math.min(base, 6.5);
+  return Math.min(base, 5.2);
 }
-function germSpawnInterval(){ return Math.max(950 - level*22, 320); }
+function germSpawnInterval(){ return Math.max(1000 - level*16, 420); }
 function unlockedTypes(){ return GERM_TYPES.slice(0, Math.min(2 + Math.floor(level/5), GERM_TYPES.length)); }
 
 function spawnGerm(){
@@ -194,7 +194,7 @@ function spawnGerm(){
 }
 
 function randomPerkType(){
-  const keys = ['laser','double','impfig','zitlupe','life'];
+  const keys = ['laser','double','impfig','zitlupe','life','life']; // life doppelt gewichtet
   return keys[Math.floor(Math.random()*keys.length)];
 }
 const PERK_EMOJI = { laser:'🔴', double:'💉', impfig:'🛡️', zitlupe:'🐌', life:'❤️' };
@@ -207,10 +207,10 @@ function spawnPerkItem(){
 
 function bossConfigForLevel(lv){
   // Progressive Schwierigkeit: erst einfach, dann eigeni Tücke pro Abschnitt
-  if(lv <= 5)  return {canSplit:false, speedMult:1.0, attackMult:1.0, hpMult:1.0};
-  if(lv <= 12) return {canSplit:false, speedMult:1.15, attackMult:0.8, hpMult:1.1};
-  if(lv <= 20) return {canSplit:true,  speedMult:1.0, attackMult:1.0, hpMult:0.9};
-  return           {canSplit:true,  speedMult:1.3, attackMult:0.75, hpMult:1.15};
+  if(lv <= 8)  return {canSplit:false, speedMult:0.9, attackMult:1.4, hpMult:0.85};
+  if(lv <= 16) return {canSplit:false, speedMult:1.05, attackMult:1.1, hpMult:0.95};
+  if(lv <= 24) return {canSplit:true,  speedMult:1.0, attackMult:1.3, hpMult:0.85};
+  return           {canSplit:true,  speedMult:1.15, attackMult:1.0, hpMult:1.0};
 }
 
 function makeBoss(name, emoji, hp, x, stage, cfg){
@@ -225,7 +225,7 @@ function spawnBoss(){
   const name = BOSS_NAMES[Math.min(level-1, BOSS_NAMES.length-1)];
   const emoji = BOSS_EMOJIS[(level-1) % BOSS_EMOJIS.length];
   const cfg = bossConfigForLevel(level);
-  const hp = Math.round((6 + level*1.5) * cfg.hpMult);
+  const hp = Math.round((4 + level*0.85) * cfg.hpMult);
   bosses = [makeBoss(name, emoji, hp, W/2, 1, cfg)];
   bossBarWrap.style.display = 'block';
   updateBossBar();
@@ -278,7 +278,7 @@ function update(dt){
     if(lastGermSpawn > germSpawnInterval()){ spawnGerm(); lastGermSpawn = 0; }
   }
   lastPerkSpawn += dt;
-  if(lastPerkSpawn > 7000 + Math.random()*3000){ spawnPerkItem(); lastPerkSpawn = 0; }
+  if(lastPerkSpawn > 4500 + Math.random()*2000){ spawnPerkItem(); lastPerkSpawn = 0; }
   perkItems.forEach(p => p.y += fallSpeed()*0.85*(1));
   perkItems = perkItems.filter(p => {
     const dx=p.x-player.x, dy=p.y-player.y;
@@ -296,8 +296,10 @@ function update(dt){
 
   bosses.forEach(bo => {
     bo.x += bo.vx*bo.dir*(dt/16.7);
-    if(bo.x < bo.r+10 || bo.x > W-bo.r-10) bo.dir *= -1;
-    bo.y = 90 + Math.sin((gameClock+bo.x*3)/500)*10;
+    const minX = bo.r+14, maxX = W-bo.r-14;
+    if(bo.x <= minX){ bo.x = minX; bo.dir = 1; }
+    else if(bo.x >= maxX){ bo.x = maxX; bo.dir = -1; }
+    bo.y = 90 + Math.sin(gameClock/500 + bo.wobble)*10;
     bo.lastAttack += dt;
     if(bo.lastAttack > bo.attackInterval){
       bo.lastAttack = 0;
@@ -376,8 +378,10 @@ function update(dt){
         showToast('💥 ' + bo.name + ' teilt sich!', 1400);
         const childHp = Math.max(2, Math.ceil(bo.maxHp*0.45));
         const cfg = bossConfigForLevel(level);
-        newBosses.push(makeBoss(bo.name, bo.emoji, childHp, Math.max(bo.r+20, bo.x-40), 2, cfg));
-        newBosses.push(makeBoss(bo.name, bo.emoji, childHp, Math.min(W-bo.r-20, bo.x+40), 2, cfg));
+        const leftChild = makeBoss(bo.name, bo.emoji, childHp, W*0.32, 2, cfg);
+        const rightChild = makeBoss(bo.name, bo.emoji, childHp, W*0.68, 2, cfg);
+        leftChild.dir = -1; rightChild.dir = 1;
+        newBosses.push(leftChild, rightChild);
       }
       // andere Bosse (kei Split) sterbed eifach
     } else {

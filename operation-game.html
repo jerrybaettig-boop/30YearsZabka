@@ -26,7 +26,7 @@ body{overscroll-behavior:none;}
 .game-shell:fullscreen, .game-shell:-webkit-full-screen{
   width:100vw; height:100vh; border-radius:0; background:#0f2d1e;
   display:flex; flex-direction:column; align-items:center; justify-content:space-between;
-  padding:10px 0;
+  padding:max(48px, env(safe-area-inset-top)) 0 max(20px, env(safe-area-inset-bottom));
 }
 .fs-chrome{display:none;}
 .game-shell:fullscreen .fs-chrome, .game-shell:-webkit-full-screen .fs-chrome{
